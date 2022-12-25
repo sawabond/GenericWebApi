@@ -4,6 +4,8 @@ namespace BusinessLogic.Options;
 
 public sealed class JwtOptions
 {
+    public const string Section = "Jwt";
+
     private const int MinimumHmac256KeyLength = 16;
 
     [Required, StringLength(100, MinimumLength = MinimumHmac256KeyLength, 
