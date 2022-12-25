@@ -30,7 +30,8 @@ internal sealed class Seeder : ISeeder
 
         if (admin is null)
         {
-            admin = new AppUser { UserName = "Admin", Email = "some@mail.com" };
+            admin = new AppUser { UserName = "Admin", Email = "some@mail.com", EmailConfirmed = true };
+
             var adminResult = await _userManager.CreateAsync(admin, "Pa$$w0rd");
 
             if (adminResult.Succeeded == false)
@@ -38,6 +39,9 @@ internal sealed class Seeder : ISeeder
                 return Result.Fail("Unable to seed admin user");
             }
         }
+
+        admin.EmailConfirmed = true;
+        await _userManager.UpdateAsync(admin);
 
         var roles = await _userManager.GetRolesAsync(admin);
 
