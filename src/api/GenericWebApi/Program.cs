@@ -1,4 +1,5 @@
 using AutoMapper;
+using BusinessLogic.Abstractions;
 using BusinessLogic.Mapping;
 using BusinessLogic.Options;
 using DataAccess;
@@ -43,6 +44,8 @@ services.AddSingleton(mapperConfig.CreateMapper());
 services.AddBearerAuthentication();
 
 var app = builder.Build();
+
+await app.Services.CreateScope().ServiceProvider.GetRequiredService<ISeeder>().SeedAsync();
 
 if (app.Environment.IsDevelopment())
 {
