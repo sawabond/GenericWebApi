@@ -1,4 +1,5 @@
-﻿using BusinessLogic.Abstractions;
+﻿using AutoMapper;
+using BusinessLogic.Abstractions;
 using BusinessLogic.Models.AppUser;
 using GenericWebApi.Extensions;
 using GenericWebApi.Requests.Auth;
@@ -11,16 +12,18 @@ namespace GenericWebApi.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
+    private readonly IMapper _mapper;
 
-    public AuthController(IAuthService authService)
+    public AuthController(IAuthService authService, IMapper mapper)
     {
         _authService = authService;
+        _mapper = mapper;
     }
 
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterRequest request)
     {
-        var result = await _authService.RegisterAsync(new RegisterModel(request.UserName, request.Password));
+        var result = await _authService.RegisterAsync(_mapper.Map<RegisterModel>(request));
 
         return result.IsSuccess 
             ? Ok(result.ToResponse()) 
@@ -30,7 +33,7 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
-        var result = await _authService.LoginAsync(new LoginModel(request.UserName, request.Password));
+        var result = await _authService.LoginAsync(_mapper.Map<LoginModel>(request));
 
         return result.IsSuccess
             ? Ok(result.ToResponse())

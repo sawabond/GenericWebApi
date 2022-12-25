@@ -1,4 +1,6 @@
-﻿using BusinessLogic.Extensions;
+﻿using BusinessLogic;
+using BusinessLogic.Extensions;
+using BusinessLogic.Models;
 using BusinessLogic.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
@@ -38,5 +40,14 @@ public static class ServiceCollectionExtensions
             });
 
         return services;
+    }
+
+    public static IServiceCollection AddBusinessLogicServices(this IServiceCollection services)
+    {
+        return services.Scan(selector => selector
+                .FromAssemblies(typeof(AssemblyReference).Assembly)
+                .AddClasses(filter => filter.NotInNamespaceOf<ModelsNamespaceReference>(), publicOnly: false)
+                .AsImplementedInterfaces()
+                .WithScopedLifetime());
     }
 }

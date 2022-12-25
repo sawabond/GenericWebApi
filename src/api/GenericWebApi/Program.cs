@@ -1,7 +1,5 @@
 using AutoMapper;
-using BusinessLogic;
 using BusinessLogic.Mapping;
-using BusinessLogic.Models;
 using BusinessLogic.Options;
 using DataAccess;
 using DataAccess.Entities;
@@ -11,28 +9,28 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+var services = builder.Services;
 
-builder.Services.AddControllersWithViews();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+services.AddControllersWithViews().AddNewtonsoftJson(options =>
+{
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+}); ;
+services.AddEndpointsApiExplorer();
+services.AddSwaggerGen();
 
-builder.Services.AddDbContext<ApplicationContext>(o => 
+services.AddDbContext<ApplicationContext>(o => 
 {
     o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-builder.Services
+services
     .AddIdentity<AppUser, AppRole>()
     .AddEntityFrameworkStores<ApplicationContext>()
     .AddDefaultTokenProviders();
 
-builder.Services.AddOptions<JwtOptions>().BindConfiguration("Jwt");
+services.AddOptions<JwtOptions>().BindConfiguration(JwtOptions.Section);
 
-builder.Services.Scan(selector => selector
-                .FromAssemblies(typeof(AssemblyReference).Assembly)
-                .AddClasses(filter => filter.NotInNamespaceOf<ModelsNamespaceReference>(), publicOnly: false)
-                .AsImplementedInterfaces()
-                .WithScopedLifetime());
+services.AddBusinessLogicServices();
 
 var mapperConfig = new MapperConfiguration(mc =>
 {
@@ -40,9 +38,9 @@ var mapperConfig = new MapperConfiguration(mc =>
     mc.AddProfile(new BusinessProfile());
 });
 
-builder.Services.AddSingleton(mapperConfig.CreateMapper());
+services.AddSingleton(mapperConfig.CreateMapper());
 
-builder.Services.AddBearerAuthentication();
+services.AddBearerAuthentication();
 
 var app = builder.Build();
 
