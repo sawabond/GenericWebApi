@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BusinessLogic.Abstractions;
 using BusinessLogic.Models.AppUser;
+using BusinessLogic.Validation.Abstractions;
 using DataAccess.Entities;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
@@ -12,19 +13,25 @@ public sealed class AuthService : IAuthService
     private readonly UserManager<AppUser> _userManager;
     private readonly IMapper _mapper;
     private readonly ITokenService _tokenService;
+    private readonly IModelValidator _validator;
 
     public AuthService(
         UserManager<AppUser> userManager, 
         IMapper mapper,
-        ITokenService tokenService)
+        ITokenService tokenService,
+        IModelValidator validator)
     {
         _userManager = userManager;
         _mapper = mapper;
         _tokenService = tokenService;
+        _validator = validator;
     }
 
     public async Task<Result<UserViewModel>> LoginAsync(LoginModel model)
     {
+        var validationResult = _validator.Validate(model);
+        if (!validationResult.IsSuccess) return validationResult;
+
         var user = await _userManager.FindByNameAsync(model.UserName);
 
         if (user is null)
@@ -44,6 +51,9 @@ public sealed class AuthService : IAuthService
 
     public async Task<Result<UserViewModel>> RegisterAsync(RegisterModel model)
     {
+        var validationResult = _validator.Validate(model);
+        if (!validationResult.IsSuccess) return validationResult;
+
         var user = _mapper.Map<AppUser>(model);
 
         var identityResult = await _userManager.CreateAsync(user, model.Password);
