@@ -12,7 +12,7 @@ public static class ResultExtensions
         @this.Errors.Select(e => e.Message);
 
     public static ResponseModel<T> ToResponse<T>(this Result<T> @this) =>
-        new ResponseModel<T>(@this.Value, @this.ToErrors().ToArray());
+        new ResponseModel<T>(@this.ValueOrDefault, @this.ToErrors().ToArray());
 
     public static ResponseModel ToResponse(this Result @this) =>
         new ResponseModel(@this.ToErrors().ToArray());

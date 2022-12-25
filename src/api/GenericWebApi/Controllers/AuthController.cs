@@ -1,9 +1,7 @@
 ﻿using BusinessLogic.Abstractions;
-using BusinessLogic.Models;
 using BusinessLogic.Models.AppUser;
 using GenericWebApi.Extensions;
 using GenericWebApi.Requests.Auth;
-using GenericWebApi.Responses;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GenericWebApi.Controllers;
@@ -26,6 +24,16 @@ public class AuthController : ControllerBase
 
         return result.IsSuccess 
             ? Ok(result.ToResponse()) 
+            : BadRequest(result.ToResponse());
+    }
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] LoginRequest request)
+    {
+        var result = await _authService.LoginAsync(new LoginModel(request.UserName, request.Password));
+
+        return result.IsSuccess
+            ? Ok(result.ToResponse())
             : BadRequest(result.ToResponse());
     }
 }
