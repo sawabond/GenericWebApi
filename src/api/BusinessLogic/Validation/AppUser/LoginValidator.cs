@@ -9,6 +9,6 @@ internal sealed class LoginValidator : AbstractValidator<LoginModel>
 	public LoginValidator()
 	{
 		RuleFor(x => x.UserName).NotEmpty().Length(3, 20);
-		RuleFor(x => x.Password).NotEmpty().Length(6, 50).Matches(PasswordRegex);
+		RuleFor(x => x.Password).Matches(PasswordRegex).WithMessage(PasswordMessage);
 	}
 }
