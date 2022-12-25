@@ -3,6 +3,7 @@ using BusinessLogic.Models;
 using BusinessLogic.Models.AppUser;
 using GenericWebApi.Extensions;
 using GenericWebApi.Requests.Auth;
+using GenericWebApi.Responses;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GenericWebApi.Controllers;
@@ -18,13 +19,13 @@ public class AuthController : ControllerBase
         _authService = authService;
     }
 
-    [HttpPost]
+    [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterRequest request)
     {
         var result = await _authService.RegisterAsync(new RegisterModel(request.UserName, request.Password));
 
         return result.IsSuccess 
-            ? Ok(result.Value) 
-            : BadRequest(result.ToErrorString());
+            ? Ok(result.ToResponse()) 
+            : BadRequest(result.ToResponse());
     }
 }

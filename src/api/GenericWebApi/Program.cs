@@ -2,12 +2,13 @@ using AutoMapper;
 using BusinessLogic;
 using BusinessLogic.Mapping;
 using BusinessLogic.Models;
+using BusinessLogic.Options;
 using DataAccess;
 using DataAccess.Entities;
+using GenericWebApi.Extensions;
 using GenericWebApi.Mapping;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +26,8 @@ builder.Services
     .AddEntityFrameworkStores<ApplicationContext>()
     .AddDefaultTokenProviders();
 
+builder.Services.AddOptions<JwtOptions>().BindConfiguration("Jwt");
+
 builder.Services.Scan(selector => selector
                 .FromAssemblies(typeof(AssemblyReference).Assembly)
                 .AddClasses(filter => filter.NotInNamespaceOf<ModelsNamespaceReference>(), publicOnly: false)
@@ -39,7 +42,7 @@ var mapperConfig = new MapperConfiguration(mc =>
 
 builder.Services.AddSingleton(mapperConfig.CreateMapper());
 
-
+builder.Services.AddBearerAuthentication();
 
 var app = builder.Build();
 
@@ -50,6 +53,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
