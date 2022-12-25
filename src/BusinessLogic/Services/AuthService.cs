@@ -23,17 +23,41 @@ public sealed class AuthService : IAuthService
         _tokenService = tokenService;
     }
 
+    public async Task<Result<UserViewModel>> LoginAsync(LoginModel model)
+    {
+        var user = await _userManager.FindByNameAsync(model.UserName);
+
+        if (user is null)
+        {
+            return Result.Fail($"User with username {model.UserName} was not found");
+        }
+
+        var isPassowordCorrect = await _userManager.CheckPasswordAsync(user, model.Password);
+
+        if (isPassowordCorrect == false)
+        {
+            return Result.Fail("Wrong password");
+        }
+
+        return await CreateTokenFor(user);
+    }
+
     public async Task<Result<UserViewModel>> RegisterAsync(RegisterModel model)
     {
         var user = _mapper.Map<AppUser>(model);
 
-        var identityResult = await _userManager.CreateAsync(user);
+        var identityResult = await _userManager.CreateAsync(user, model.Password);
 
         if (identityResult.Succeeded == false)
         {
             return Result.Fail(identityResult.Errors.Select(e => e.Description));
         }
 
+        return await CreateTokenFor(user);
+    }
+
+    private async Task<Result<UserViewModel>> CreateTokenFor(AppUser user)
+    {
         var tokenResult = await _tokenService.CreateTokenAsync(user);
 
         if (tokenResult.IsFailed)
