@@ -11,11 +11,16 @@ public sealed class AuthService : IAuthService
 {
     private readonly UserManager<AppUser> _userManager;
     private readonly IMapper _mapper;
+    private readonly ITokenService _tokenService;
 
-    public AuthService(UserManager<AppUser> userManager, IMapper mapper)
+    public AuthService(
+        UserManager<AppUser> userManager, 
+        IMapper mapper,
+        ITokenService tokenService)
     {
         _userManager = userManager;
         _mapper = mapper;
+        _tokenService = tokenService;
     }
 
     public async Task<Result<UserViewModel>> RegisterAsync(RegisterModel model)
@@ -24,8 +29,20 @@ public sealed class AuthService : IAuthService
 
         var identityResult = await _userManager.CreateAsync(user);
 
-        return identityResult.Succeeded
-            ? Result.Ok(_mapper.Map<UserViewModel>(user))
-            : Result.Fail(identityResult.Errors.Select(e => e.Description));
+        if (identityResult.Succeeded == false)
+        {
+            return Result.Fail(identityResult.Errors.Select(e => e.Description));
+        }
+
+        var tokenResult = await _tokenService.CreateTokenAsync(user);
+
+        if (tokenResult.IsFailed)
+        {
+            return Result.Ok(_mapper.Map<UserViewModel>(user)).WithErrors(tokenResult.Errors);
+        }
+
+        var userViewModel = _mapper.Map<UserViewModel>(user) with { Token = tokenResult.Value };
+
+        return Result.Ok(userViewModel);
     }
 }
