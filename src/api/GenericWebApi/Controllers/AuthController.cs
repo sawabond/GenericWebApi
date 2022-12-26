@@ -3,7 +3,9 @@ using BusinessLogic.Abstractions;
 using BusinessLogic.Models.AppUser;
 using GenericWebApi.Extensions;
 using GenericWebApi.Requests.Auth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNet.Identity;
 
 namespace GenericWebApi.Controllers;
 
@@ -38,5 +40,22 @@ public class AuthController : ControllerBase
         return result.IsSuccess
             ? Ok(result.ToResponse())
             : BadRequest(result.ToResponse());
+    }
+
+    [HttpPost("request-email-confirmation")]
+    [Authorize]
+    public async Task<IActionResult> RequestConfirmation()
+    {
+        var userId = User.Identity.GetUserId();
+
+        var result = await _authService.SendConfirmation(userId);
+    }
+
+    [HttpPost("confirm-email")]
+    public async Task<IActionResult> ConfirmEmail([FromQuery] string userId, [FromQuery] string token)
+    {
+        var confirmEmailModel = new ConfirmEmailModel(userId, token);
+
+       var result = await _authService.ConfirmEmail(confirmEmailModel);
     }
 }

@@ -2,6 +2,7 @@ using AutoMapper;
 using BusinessLogic.Abstractions;
 using BusinessLogic.Mapping;
 using BusinessLogic.Options;
+using BusinessLogic.Options.Configuration;
 using DataAccess;
 using DataAccess.Entities;
 using GenericWebApi.Extensions;
@@ -30,6 +31,7 @@ services
     .AddDefaultTokenProviders();
 
 services.AddOptions<JwtOptions>().BindConfiguration(JwtOptions.Section);
+services.ConfigureOptions<MailSettingsSetup>();
 
 services.AddBusinessLogicServices();
 

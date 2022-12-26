@@ -66,6 +66,23 @@ public sealed class AuthService : IAuthService
         return await CreateTokenFor(user);
     }
 
+    public async Task<Result> ConfirmEmailAsync(ConfirmEmailModel model)
+    {
+
+    }
+
+    public async Task<Result> SendEmailConfirmationAsync(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+
+        if (user is null)
+        {
+            return Result.Fail($"User with id {userId} was not found");
+        }
+
+        var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+    }
+
     private async Task<Result<UserViewModel>> CreateTokenFor(AppUser user)
     {
         var tokenResult = await _tokenService.CreateTokenAsync(user);
