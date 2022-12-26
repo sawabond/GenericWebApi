@@ -2,4 +2,5 @@
 
 public sealed record RegisterModel
     (string UserName,
-    string Password);
+    string Password,
+    string Email);

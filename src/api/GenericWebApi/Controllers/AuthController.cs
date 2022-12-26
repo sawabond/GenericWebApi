@@ -48,14 +48,26 @@ public class AuthController : ControllerBase
     {
         var userId = User.Identity.GetUserId();
 
-        var result = await _authService.SendConfirmation(userId);
+        var result = await _authService.SendEmailConfirmationAsync(userId, $"{CurrentUrl}/api/auth/confirm-email");
+
+        return result.IsSuccess
+            ? Ok()
+            : BadRequest(result.ToResponse());
     }
 
-    [HttpPost("confirm-email")]
-    public async Task<IActionResult> ConfirmEmail([FromQuery] string userId, [FromQuery] string token)
+    [HttpGet("confirm-email")]
+    public async Task<IActionResult> ConfirmEmail(
+        [FromQuery] string userId, 
+        [FromQuery] string token)
     {
         var confirmEmailModel = new ConfirmEmailModel(userId, token);
 
-       var result = await _authService.ConfirmEmail(confirmEmailModel);
+        var result = await _authService.ConfirmEmailAsync(confirmEmailModel);
+
+        return result.IsSuccess
+            ? Ok()
+            : BadRequest(result.ToResponse());
     }
+
+    private string CurrentUrl => $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}";
 }

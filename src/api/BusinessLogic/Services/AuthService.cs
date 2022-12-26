@@ -1,30 +1,35 @@
 ﻿using AutoMapper;
 using BusinessLogic.Abstractions;
 using BusinessLogic.Models.AppUser;
+using BusinessLogic.Models.Mail;
 using BusinessLogic.Validation.Abstractions;
 using DataAccess.Entities;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
+using System.Web;
 
 namespace BusinessLogic.Services;
 
-public sealed class AuthService : IAuthService
+internal sealed class AuthService : IAuthService
 {
     private readonly UserManager<AppUser> _userManager;
     private readonly IMapper _mapper;
     private readonly ITokenService _tokenService;
     private readonly IModelValidator _validator;
+    private readonly IMailService _mailService;
 
     public AuthService(
         UserManager<AppUser> userManager, 
         IMapper mapper,
         ITokenService tokenService,
-        IModelValidator validator)
+        IModelValidator validator,
+        IMailService mailService)
     {
         _userManager = userManager;
         _mapper = mapper;
         _tokenService = tokenService;
         _validator = validator;
+        _mailService = mailService;
     }
 
     public async Task<Result<UserViewModel>> LoginAsync(LoginModel model)
@@ -68,10 +73,21 @@ public sealed class AuthService : IAuthService
 
     public async Task<Result> ConfirmEmailAsync(ConfirmEmailModel model)
     {
+        var user = await _userManager.FindByIdAsync(model.UserId);
 
+        if (user is null)
+        {
+            return Result.Fail($"User with id {model.UserId} was not found");
+        }
+
+        var result = await _userManager.ConfirmEmailAsync(user, model.Token);
+
+        return result.Succeeded
+            ? Result.Ok()
+            : Result.Fail(result.Errors.Select(e => e.Description));
     }
 
-    public async Task<Result> SendEmailConfirmationAsync(string userId)
+    public async Task<Result> SendEmailConfirmationAsync(string userId, string callbackUrl)
     {
         var user = await _userManager.FindByIdAsync(userId);
 
@@ -81,6 +97,23 @@ public sealed class AuthService : IAuthService
         }
 
         var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        token = HttpUtility.UrlEncode(token);
+
+        var link = $"{callbackUrl}?userId={user.Id}&token={token}";
+
+        var mail = new MailData(
+            new List<string> { user.Email },
+            "Email confirmation",
+            $"Confirm your email by <a href={link}>this link</a>");
+
+        var sendEmailResult = await _mailService.SendAsync(mail);
+
+        if (sendEmailResult.IsFailed)
+        {
+            return Result.Fail(sendEmailResult.Errors);
+        }
+
+        return Result.Ok();
     }
 
     private async Task<Result<UserViewModel>> CreateTokenFor(AppUser user)

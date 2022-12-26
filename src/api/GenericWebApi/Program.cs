@@ -3,12 +3,14 @@ using BusinessLogic.Abstractions;
 using BusinessLogic.Mapping;
 using BusinessLogic.Options;
 using BusinessLogic.Options.Configuration;
+using BusinessLogic.Services;
 using DataAccess;
 using DataAccess.Entities;
 using GenericWebApi.Extensions;
 using GenericWebApi.Mapping;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
@@ -34,6 +36,7 @@ services.AddOptions<JwtOptions>().BindConfiguration(JwtOptions.Section);
 services.ConfigureOptions<MailSettingsSetup>();
 
 services.AddBusinessLogicServices();
+services.AddSwagger();
 
 var mapperConfig = new MapperConfiguration(mc =>
 {
@@ -42,6 +45,7 @@ var mapperConfig = new MapperConfiguration(mc =>
 });
 
 services.AddSingleton(mapperConfig.CreateMapper());
+services.AddSingleton<IConfigureOptions<MailSettingsOptions>, MailSettingsSetup>();
 
 services.AddBearerAuthentication();
 
