@@ -6,6 +6,8 @@ using GenericWebApi.Requests.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNet.Identity;
+using Microsoft.FeatureManagement.Mvc;
+using BusinessLogic.FeatureManagement;
 
 namespace GenericWebApi.Controllers;
 
@@ -42,6 +44,7 @@ public class AuthController : ControllerBase
             : BadRequest(result.ToResponse());
     }
 
+    [FeatureGate(nameof(FeatureFlags.EmailVerification))]
     [HttpPost("request-email-confirmation")]
     [Authorize]
     public async Task<IActionResult> RequestConfirmation([FromQuery] string callbackUrl)
@@ -58,6 +61,7 @@ public class AuthController : ControllerBase
             : BadRequest(result.ToResponse());
     }
 
+    [FeatureGate(nameof(FeatureFlags.EmailVerification))]
     [HttpGet("confirm-email")]
     public async Task<IActionResult> ConfirmEmail(
         [FromQuery] string userId, 

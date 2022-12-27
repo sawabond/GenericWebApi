@@ -3,7 +3,6 @@ using BusinessLogic.Abstractions;
 using BusinessLogic.Mapping;
 using BusinessLogic.Options;
 using BusinessLogic.Options.Configuration;
-using BusinessLogic.Services;
 using DataAccess;
 using DataAccess.Entities;
 using GenericWebApi.Extensions;
@@ -11,6 +10,7 @@ using GenericWebApi.Mapping;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.FeatureManagement;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
@@ -21,6 +21,7 @@ services.AddControllersWithViews().AddNewtonsoftJson(options =>
 }); ;
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();
+services.AddFeatureManagement(builder.Configuration.GetSection("FeatureManagement"));
 
 services.AddDbContext<ApplicationContext>(o => 
 {
