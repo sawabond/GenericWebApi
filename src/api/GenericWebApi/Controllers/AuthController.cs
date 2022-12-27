@@ -44,11 +44,14 @@ public class AuthController : ControllerBase
 
     [HttpPost("request-email-confirmation")]
     [Authorize]
-    public async Task<IActionResult> RequestConfirmation()
+    public async Task<IActionResult> RequestConfirmation([FromQuery] string callbackUrl)
     {
         var userId = User.Identity.GetUserId();
 
-        var result = await _authService.SendEmailConfirmationAsync(userId, $"{CurrentUrl}/api/auth/confirm-email");
+        var result = await _authService.SendEmailConfirmationAsync(
+            userId, 
+            $"{CurrentUrl}/api/auth/confirm-email",
+            callbackUrl);
 
         return result.IsSuccess
             ? Ok()
@@ -58,14 +61,15 @@ public class AuthController : ControllerBase
     [HttpGet("confirm-email")]
     public async Task<IActionResult> ConfirmEmail(
         [FromQuery] string userId, 
-        [FromQuery] string token)
+        [FromQuery] string token,
+        [FromQuery] string callbackUrl)
     {
         var confirmEmailModel = new ConfirmEmailModel(userId, token);
 
         var result = await _authService.ConfirmEmailAsync(confirmEmailModel);
 
         return result.IsSuccess
-            ? Ok()
+            ? Redirect(callbackUrl)
             : BadRequest(result.ToResponse());
     }
 

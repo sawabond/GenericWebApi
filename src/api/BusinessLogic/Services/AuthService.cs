@@ -87,7 +87,7 @@ internal sealed class AuthService : IAuthService
             : Result.Fail(result.Errors.Select(e => e.Description));
     }
 
-    public async Task<Result> SendEmailConfirmationAsync(string userId, string callbackUrl)
+    public async Task<Result> SendEmailConfirmationAsync(string userId, string confirmUrl, string callbackUrl)
     {
         var user = await _userManager.FindByIdAsync(userId);
 
@@ -98,8 +98,9 @@ internal sealed class AuthService : IAuthService
 
         var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
         token = HttpUtility.UrlEncode(token);
+        callbackUrl = HttpUtility.UrlEncode(callbackUrl);
 
-        var link = $"{callbackUrl}?userId={user.Id}&token={token}";
+        var link = $"{confirmUrl}?userId={user.Id}&token={token}&callbackUrl={callbackUrl}";
 
         var mail = new MailData(
             new List<string> { user.Email },

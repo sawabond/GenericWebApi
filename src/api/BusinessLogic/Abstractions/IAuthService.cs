@@ -11,5 +11,5 @@ public interface IAuthService
 
     Task<Result> ConfirmEmailAsync(ConfirmEmailModel model);
 
-    Task<Result> SendEmailConfirmationAsync(string userId, string callbackUrl);
+    Task<Result> SendEmailConfirmationAsync(string userId, string confirmUrl, string callbackUrl);
 }
