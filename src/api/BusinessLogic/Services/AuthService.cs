@@ -73,7 +73,7 @@ internal sealed class AuthService : IAuthService
 
         var identityResult = await _userManager.CreateAsync(user, model.Password);
 
-        if (identityResult.Succeeded == false)
+        if (identityResult.Succeeded is false)
         {
             return Result.Fail(identityResult.Errors.Select(e => e.Description));
         }

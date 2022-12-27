@@ -13,7 +13,7 @@ namespace GenericWebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class AuthController : ControllerBase
+public sealed class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
     private readonly IMapper _mapper;
@@ -29,8 +29,8 @@ public class AuthController : ControllerBase
     {
         var result = await _authService.RegisterAsync(_mapper.Map<RegisterModel>(request));
 
-        return result.IsSuccess 
-            ? Ok(result.ToResponse()) 
+        return result.IsSuccess
+            ? Ok(result.ToResponse())
             : BadRequest(result.ToResponse());
     }
 
@@ -46,13 +46,12 @@ public class AuthController : ControllerBase
 
     [FeatureGate(nameof(FeatureFlags.EmailVerification))]
     [HttpPost("request-email-confirmation")]
-    [Authorize]
-    public async Task<IActionResult> RequestConfirmation([FromQuery] string callbackUrl)
+    public async Task<IActionResult> RequestConfirmation(
+        [FromQuery] string userId,
+        [FromQuery] string callbackUrl)
     {
-        var userId = User.Identity.GetUserId();
-
         var result = await _authService.SendEmailConfirmationAsync(
-            userId, 
+            userId,
             $"{CurrentUrl}/api/auth/confirm-email",
             callbackUrl);
 
@@ -64,7 +63,7 @@ public class AuthController : ControllerBase
     [FeatureGate(nameof(FeatureFlags.EmailVerification))]
     [HttpGet("confirm-email")]
     public async Task<IActionResult> ConfirmEmail(
-        [FromQuery] string userId, 
+        [FromQuery] string userId,
         [FromQuery] string token,
         [FromQuery] string callbackUrl)
     {

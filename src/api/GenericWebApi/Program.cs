@@ -34,7 +34,6 @@ services
     .AddDefaultTokenProviders();
 
 services.AddOptions<JwtOptions>().BindConfiguration(JwtOptions.Section);
-services.ConfigureOptions<MailSettingsSetup>();
 
 services.AddBusinessLogicServices();
 services.AddSwagger();
