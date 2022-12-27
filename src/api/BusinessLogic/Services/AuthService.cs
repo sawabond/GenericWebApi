@@ -61,6 +61,9 @@ internal sealed class AuthService : IAuthService
             return Result.Fail($"Invalid login attempt");
         }
 
+        var s = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+        var infos = await _signInManager.GetExternalLoginInfoAsync();
+
         return await CreateTokenFor(user);
     }
 

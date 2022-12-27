@@ -9,8 +9,6 @@ using DataAccess.Entities;
 using GenericWebApi.Extensions;
 using GenericWebApi.Mapping;
 using GenericWebApi.Options;
-using GenericWebApi.Services;
-using GenericWebApi.Services.Abstractions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -26,7 +24,6 @@ services.AddControllersWithViews().AddNewtonsoftJson(options =>
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();
 services.AddSession();
-services.AddSingleton<IGoogleAuthService, GoogleAuthService>();
 
 services.AddCors(c =>
 {
@@ -63,7 +60,13 @@ var mapperConfig = new MapperConfiguration(mc =>
 services.AddSingleton(mapperConfig.CreateMapper());
 services.AddSingleton<IConfigureOptions<MailSettingsOptions>, MailSettingsSetup>();
 
-services.AddBearerAuthentication();
+services.AddBearerAuthentication().AddGoogle("google", opt =>
+{
+    var googleAuth = builder.Configuration.GetSection("Authentication:Google");
+    opt.ClientId = googleAuth["ClientId"];
+    opt.ClientSecret = googleAuth["ClientSecret"];
+    opt.SignInScheme = IdentityConstants.ExternalScheme;
+});
 
 #region Features
 
