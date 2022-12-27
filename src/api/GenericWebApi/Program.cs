@@ -1,5 +1,6 @@
 using AutoMapper;
 using BusinessLogic.Abstractions;
+using BusinessLogic.FeatureManagement;
 using BusinessLogic.Mapping;
 using BusinessLogic.Options;
 using BusinessLogic.Options.Configuration;
@@ -21,7 +22,6 @@ services.AddControllersWithViews().AddNewtonsoftJson(options =>
 }); ;
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();
-services.AddFeatureManagement(builder.Configuration.GetSection("FeatureManagement"));
 
 services.AddDbContext<ApplicationContext>(o => 
 {
@@ -49,6 +49,22 @@ services.AddSingleton(mapperConfig.CreateMapper());
 services.AddSingleton<IConfigureOptions<MailSettingsOptions>, MailSettingsSetup>();
 
 services.AddBearerAuthentication();
+
+#region Features
+
+services.AddFeatureManagement(builder.Configuration.GetSection("FeatureManagement"));
+
+var featureManager = services.BuildServiceProvider().GetRequiredService<IFeatureManager>();
+
+if (await featureManager.IsEnabledAsync(nameof(FeatureFlags.EmailVerification)))
+{
+    services.Configure<IdentityOptions>(opts =>
+    {
+        opts.SignIn.RequireConfirmedEmail = true;
+    });
+}
+
+#endregion
 
 var app = builder.Build();
 

@@ -13,19 +13,22 @@ namespace BusinessLogic.Services;
 internal sealed class AuthService : IAuthService
 {
     private readonly UserManager<AppUser> _userManager;
+    private readonly SignInManager<AppUser> _signInManager;
     private readonly IMapper _mapper;
     private readonly ITokenService _tokenService;
     private readonly IModelValidator _validator;
     private readonly IMailService _mailService;
 
     public AuthService(
-        UserManager<AppUser> userManager, 
+        UserManager<AppUser> userManager,
+        SignInManager<AppUser> signInManager,
         IMapper mapper,
         ITokenService tokenService,
         IModelValidator validator,
         IMailService mailService)
     {
         _userManager = userManager;
+        _signInManager = signInManager;
         _mapper = mapper;
         _tokenService = tokenService;
         _validator = validator;
@@ -44,11 +47,18 @@ internal sealed class AuthService : IAuthService
             return Result.Fail($"User with username {model.UserName} was not found");
         }
 
-        var isPassowordCorrect = await _userManager.CheckPasswordAsync(user, model.Password);
+        var passwordCorrect = await _userManager.CheckPasswordAsync(user, model.Password);
 
-        if (isPassowordCorrect == false)
+        if (passwordCorrect is false)
         {
             return Result.Fail("Wrong password");
+        }
+
+        var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, lockoutOnFailure: false);
+
+        if (result.Succeeded is false)
+        {
+            return Result.Fail($"Invalid login attempt");
         }
 
         return await CreateTokenFor(user);
@@ -68,7 +78,9 @@ internal sealed class AuthService : IAuthService
             return Result.Fail(identityResult.Errors.Select(e => e.Description));
         }
 
-        return await CreateTokenFor(user);
+        var userViewModel = _mapper.Map<UserViewModel>(user);
+
+        return Result.Ok(userViewModel);
     }
 
     public async Task<Result> ConfirmEmailAsync(ConfirmEmailModel model)
