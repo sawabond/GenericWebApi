@@ -9,17 +9,15 @@ public sealed class GoogleAuthController : ControllerBase
 {
     private readonly IGoogleAuthService _googleService;
 
-    public GoogleAuthController(
-        IGoogleAuthService googleService)
+    public GoogleAuthController(IGoogleAuthService googleService)
     {
         _googleService = googleService;
     }
 
     [HttpGet("login")]
-    public async Task<IActionResult> GoogleLogin([FromQuery] string returnUrl)
+    public async Task<IActionResult> Login([FromQuery] string returnUrl)
     {
-        
-        var redirectUrl = $"{Url.Action(nameof(ExternalLoginCallback), "GoogleAuth", new {returnUrl})}";
+        var redirectUrl = Url.Action(nameof(LoginCallback), "GoogleAuth", new { returnUrl });
         var propertiesResult = await _googleService.ConfigureExternalAuthenticationProperties(redirectUrl);
 
         return propertiesResult.IsSuccess
@@ -28,18 +26,14 @@ public sealed class GoogleAuthController : ControllerBase
     }
 
     [HttpGet("login-callback")]
-    public async Task<IActionResult> ExternalLoginCallback(
-        [FromQuery] string returnUrl,
-        [FromServices] ITokenService tokenService)
+    public async Task<IActionResult> LoginCallback([FromQuery] string returnUrl)
     {
-        var result = await _googleService.LoginUserAsync(tokenService);
+        var result = await _googleService.LoginUserAsync();
 
         return result.IsSuccess
-            ? Redirect(returnUrl)
+            ? Redirect($"{returnUrl}?accessToken={result.Value.Token}")
             : BadRequest(result.ToErrors());
     }
-
-    private string CurrentUrl => $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}";
 }
 
 

@@ -14,18 +14,21 @@ internal sealed class GoogleAuthService : IGoogleAuthService
     private readonly SignInManager<AppUser> _signInManager;
     private readonly UserManager<AppUser> _userManager;
     private readonly IMapper _mapper;
+    private readonly ITokenService _tokenService;
 
     public GoogleAuthService(
         SignInManager<AppUser> signInManager,
         UserManager<AppUser> userManager,
-        IMapper mapper)
+        IMapper mapper,
+        ITokenService tokenService)
     {
         _signInManager = signInManager;
         _userManager = userManager;
         _mapper = mapper;
+        _tokenService = tokenService;
     }
 
-    public async Task<Result<UserViewModel>> LoginUserAsync(ITokenService tokenService)
+    public async Task<Result<UserViewModel>> LoginUserAsync()
     {
         var loginInfo = await _signInManager.GetExternalLoginInfoAsync();
 
@@ -44,7 +47,7 @@ internal sealed class GoogleAuthService : IGoogleAuthService
         {
             var currentEmail = loginInfo.Principal.FindFirstValue(ClaimTypes.Email);
             var currentUser = await _userManager.FindByEmailAsync(currentEmail);
-            return await MapUserToViewWithToken(tokenService, currentUser);
+            return await MapUserToViewWithToken(_tokenService, currentUser);
         }
 
         var email = loginInfo.Principal.FindFirstValue(ClaimTypes.Email);
@@ -61,7 +64,8 @@ internal sealed class GoogleAuthService : IGoogleAuthService
             user = new AppUser
             {
                 UserName = loginInfo.Principal.FindFirstValue(ClaimTypes.Email),
-                Email = loginInfo.Principal.FindFirstValue(ClaimTypes.Email)
+                Email = loginInfo.Principal.FindFirstValue(ClaimTypes.Email),
+                EmailConfirmed = true,
             };
 
             await _userManager.CreateAsync(user);
@@ -70,7 +74,7 @@ internal sealed class GoogleAuthService : IGoogleAuthService
         await _userManager.AddLoginAsync(user, loginInfo);
         await _signInManager.SignInAsync(user, isPersistent: false);
 
-        return await MapUserToViewWithToken(tokenService, user);
+        return await MapUserToViewWithToken(_tokenService, user);
     }
 
     public async Task<Result<AuthenticationProperties>> ConfigureExternalAuthenticationProperties(string redirectUrl) =>

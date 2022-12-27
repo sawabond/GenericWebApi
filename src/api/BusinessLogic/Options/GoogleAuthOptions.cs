@@ -1,4 +1,4 @@
-﻿namespace GenericWebApi.Options;
+﻿namespace BusinessLogic.Options;
 
 public sealed class GoogleAuthOptions
 {

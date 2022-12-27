@@ -8,7 +8,6 @@ using DataAccess;
 using DataAccess.Entities;
 using GenericWebApi.Extensions;
 using GenericWebApi.Mapping;
-using GenericWebApi.Options;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;

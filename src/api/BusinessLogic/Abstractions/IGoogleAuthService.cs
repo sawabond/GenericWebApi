@@ -6,7 +6,7 @@ namespace BusinessLogic.Abstractions;
 
 public interface IGoogleAuthService
 {
-    Task<Result<UserViewModel>> LoginUserAsync(ITokenService tokenService);
+    Task<Result<UserViewModel>> LoginUserAsync();
 
     Task<Result<AuthenticationProperties>> ConfigureExternalAuthenticationProperties(string redirectUrl);
 }
