@@ -96,6 +96,11 @@ internal sealed class AuthService : IAuthService
             return Result.Fail($"User with id {userId} was not found");
         }
 
+        if (user.EmailConfirmed)
+        {
+            return Result.Fail("Email of user is already confirmed");
+        }
+
         var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
         token = HttpUtility.UrlEncode(token);
         callbackUrl = HttpUtility.UrlEncode(callbackUrl);
