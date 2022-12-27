@@ -8,6 +8,9 @@ using DataAccess;
 using DataAccess.Entities;
 using GenericWebApi.Extensions;
 using GenericWebApi.Mapping;
+using GenericWebApi.Options;
+using GenericWebApi.Services;
+using GenericWebApi.Services.Abstractions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -19,9 +22,21 @@ var services = builder.Services;
 services.AddControllersWithViews().AddNewtonsoftJson(options =>
 {
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-}); ;
+});
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();
+services.AddSession();
+services.AddSingleton<IGoogleAuthService, GoogleAuthService>();
+
+services.AddCors(c =>
+{
+    c.AddPolicy("DefaultPolicy", p =>
+    {
+        p.AllowAnyMethod();
+        p.AllowAnyOrigin();
+        p.AllowAnyHeader();
+    });
+});
 
 services.AddDbContext<ApplicationContext>(o => 
 {
@@ -34,6 +49,7 @@ services
     .AddDefaultTokenProviders();
 
 services.AddOptions<JwtOptions>().BindConfiguration(JwtOptions.Section);
+services.AddOptions<GoogleAuthOptions>().BindConfiguration(GoogleAuthOptions.Section);
 
 services.AddBusinessLogicServices();
 services.AddSwagger();
@@ -77,10 +93,14 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseCors("DefaultPolicy");
+
 app.UseAuthentication();
 
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseSession();
 
 app.Run();

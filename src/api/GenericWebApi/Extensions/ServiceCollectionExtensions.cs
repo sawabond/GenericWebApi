@@ -2,6 +2,7 @@
 using BusinessLogic.Extensions;
 using BusinessLogic.Models;
 using BusinessLogic.Options;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -12,7 +13,7 @@ namespace GenericWebApi.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddBearerAuthentication(this IServiceCollection services)
+    public static AuthenticationBuilder AddBearerAuthentication(this IServiceCollection services)
     {
         var jwtOptions = services.BuildServiceProvider().GetRequiredService<IOptions<JwtOptions>>().Value;
 
@@ -28,7 +29,7 @@ public static class ServiceCollectionExtensions
 
         services.AddSingleton(tokenValidationParameters);
 
-        services
+        return services
             .AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -40,8 +41,6 @@ public static class ServiceCollectionExtensions
                 options.SaveToken = true;
                 options.TokenValidationParameters = tokenValidationParameters;
             });
-
-        return services;
     }
 
     public static IServiceCollection AddBusinessLogicServices(this IServiceCollection services)
