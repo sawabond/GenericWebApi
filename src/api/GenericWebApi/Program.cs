@@ -1,13 +1,17 @@
 using AutoMapper;
 using BusinessLogic.Abstractions;
+using BusinessLogic.FeatureManagement;
 using BusinessLogic.Mapping;
 using BusinessLogic.Options;
+using BusinessLogic.Options.Configuration;
 using DataAccess;
 using DataAccess.Entities;
 using GenericWebApi.Extensions;
 using GenericWebApi.Mapping;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Microsoft.FeatureManagement;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
@@ -32,6 +36,7 @@ services
 services.AddOptions<JwtOptions>().BindConfiguration(JwtOptions.Section);
 
 services.AddBusinessLogicServices();
+services.AddSwagger();
 
 var mapperConfig = new MapperConfiguration(mc =>
 {
@@ -40,8 +45,25 @@ var mapperConfig = new MapperConfiguration(mc =>
 });
 
 services.AddSingleton(mapperConfig.CreateMapper());
+services.AddSingleton<IConfigureOptions<MailSettingsOptions>, MailSettingsSetup>();
 
 services.AddBearerAuthentication();
+
+#region Features
+
+services.AddFeatureManagement(builder.Configuration.GetSection("FeatureManagement"));
+
+var featureManager = services.BuildServiceProvider().GetRequiredService<IFeatureManager>();
+
+if (await featureManager.IsEnabledAsync(nameof(FeatureFlags.EmailVerification)))
+{
+    services.Configure<IdentityOptions>(opts =>
+    {
+        opts.SignIn.RequireConfirmedEmail = true;
+    });
+}
+
+#endregion
 
 var app = builder.Build();
 

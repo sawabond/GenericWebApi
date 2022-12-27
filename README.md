@@ -12,24 +12,33 @@ This is a generic web project template. Users can clone it or create new reposit
 
 ## Current features
 
-- Authorization without roles
+- Authorization with roles and basic Admin, Moder, User roles
+- Account confirmation
 
 ## Features planned
 
 - Google auth
-- Role-based auth
 - Admin controller for user CRUD
-- Account confirmation
 
 ## Usage
 
 Clone it to your PC and change the remote or click _Use this template_ -> _Create a new repository_
 
+### Feature management
+
+Some features are implemented with feature flags. To turn it on use `appsettings.json` section
+
+```json
+"FeatureManagement": {
+    "EmailVerification": true
+  }
+```
+
 ### Services
 
 Services are added in `AddBusinessLogicServices` method with [Scrutor](https://github.com/khellang/Scrutor), so you don't need to add them explicitly. Services are added only from business layer assembly.
 
-```
+```C#
 services.Scan(selector => selector
                 .FromAssemblies(typeof(AssemblyReference).Assembly)
                 .AddClasses(filter => filter.NotInNamespaceOf<ModelsNamespaceReference>(), publicOnly: false)
@@ -41,7 +50,7 @@ services.Scan(selector => selector
 
 Validation is implemented using `IModelValidator` interface. It finds appropriate validators using reflection and validates **business layer models**
 
-```
+```C#
 public interface IModelValidator
 {
     Result Validate<T>(T model) where T : class;
@@ -51,7 +60,7 @@ public interface IModelValidator
 You can just add a validator to business layer assembly and it will be used by the `IModelValidator` implementation. <br>
 Validation type is manual
 
-```
+```C#
 var validationResult = _validator.Validate(model);
 if (!validationResult.IsSuccess) return validationResult;
 ```
