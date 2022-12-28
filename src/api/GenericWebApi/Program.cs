@@ -20,7 +20,6 @@ services.AddControllersWithViews().AddNewtonsoftJson(options =>
 });
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();
-services.AddSession();
 
 services.AddCors(c =>
 {
@@ -69,9 +68,9 @@ if (await featureManager.IsEnabledAsync(nameof(FeatureFlags.GoogleAuthentication
 
     services.AddBearerAuthentication().AddGoogle("google", opt =>
     {
-        var googleAuth = builder.Configuration.GetSection("Authentication:Google");
-        opt.ClientId = googleAuth["ClientId"];
-        opt.ClientSecret = googleAuth["ClientSecret"];
+        var gogleOptions = services.BuildServiceProvider().GetService<IOptions<GoogleAuthOptions>>().Value;
+        opt.ClientId = gogleOptions.ClientId;
+        opt.ClientSecret = gogleOptions.ClientSecret;
         opt.SignInScheme = IdentityConstants.ExternalScheme;
     });
 }
@@ -101,7 +100,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.UseSession();
 
 app.Run();
