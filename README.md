@@ -14,10 +14,10 @@ This is a generic web project template. Users can clone it or create new reposit
 
 - Authorization with roles and basic Admin, Moder, User roles
 - Account confirmation
+- Google auth
 
 ## Features planned
 
-- Google auth
 - Admin controller for user CRUD
 
 ## Usage
@@ -30,7 +30,8 @@ Some features are implemented with feature flags. To turn it on use `appsettings
 
 ```json
 "FeatureManagement": {
-    "EmailVerification": true
+    "EmailVerification": true,
+    "GoogleAuthentication": true
   }
 ```
 
