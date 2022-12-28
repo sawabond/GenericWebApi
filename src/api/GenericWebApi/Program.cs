@@ -1,15 +1,13 @@
 using AutoMapper;
 using BusinessLogic.Abstractions;
+using BusinessLogic.Extensions;
 using BusinessLogic.FeatureManagement;
 using BusinessLogic.Mapping;
 using BusinessLogic.Options;
 using BusinessLogic.Options.Configuration;
-using DataAccess;
-using DataAccess.Entities;
 using GenericWebApi.Extensions;
 using GenericWebApi.Mapping;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.FeatureManagement;
 
@@ -34,18 +32,10 @@ services.AddCors(c =>
     });
 });
 
-services.AddDbContext<ApplicationContext>(o => 
-{
-    o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
-
-services
-    .AddIdentity<AppUser, AppRole>()
-    .AddEntityFrameworkStores<ApplicationContext>()
-    .AddDefaultTokenProviders();
+services.AddApplicationContext(builder.Configuration.GetConnectionString("DefaultConnection"));
+services.AddApplicationIdentity();
 
 services.AddOptions<JwtOptions>().BindConfiguration(JwtOptions.Section);
-services.AddOptions<GoogleAuthOptions>().BindConfiguration(GoogleAuthOptions.Section);
 
 services.AddBusinessLogicServices();
 services.AddSwagger();
@@ -59,14 +49,6 @@ var mapperConfig = new MapperConfiguration(mc =>
 services.AddSingleton(mapperConfig.CreateMapper());
 services.AddSingleton<IConfigureOptions<MailSettingsOptions>, MailSettingsSetup>();
 
-services.AddBearerAuthentication().AddGoogle("google", opt =>
-{
-    var googleAuth = builder.Configuration.GetSection("Authentication:Google");
-    opt.ClientId = googleAuth["ClientId"];
-    opt.ClientSecret = googleAuth["ClientSecret"];
-    opt.SignInScheme = IdentityConstants.ExternalScheme;
-});
-
 #region Features
 
 services.AddFeatureManagement(builder.Configuration.GetSection("FeatureManagement"));
@@ -79,6 +61,23 @@ if (await featureManager.IsEnabledAsync(nameof(FeatureFlags.EmailVerification)))
     {
         opts.SignIn.RequireConfirmedEmail = true;
     });
+}
+
+if (await featureManager.IsEnabledAsync(nameof(FeatureFlags.GoogleAuthentication)))
+{
+    services.AddOptions<GoogleAuthOptions>().BindConfiguration(GoogleAuthOptions.Section);
+
+    services.AddBearerAuthentication().AddGoogle("google", opt =>
+    {
+        var googleAuth = builder.Configuration.GetSection("Authentication:Google");
+        opt.ClientId = googleAuth["ClientId"];
+        opt.ClientSecret = googleAuth["ClientSecret"];
+        opt.SignInScheme = IdentityConstants.ExternalScheme;
+    });
+}
+else
+{
+    services.AddBearerAuthentication();
 }
 
 #endregion

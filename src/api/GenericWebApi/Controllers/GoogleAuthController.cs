@@ -1,9 +1,12 @@
 ﻿using BusinessLogic.Abstractions;
+using BusinessLogic.FeatureManagement;
 using GenericWebApi.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.FeatureManagement.Mvc;
 
 namespace GenericWebApi.Controllers;
 
+[FeatureGate(nameof(FeatureFlags.GoogleAuthentication))]
 [Route("api/[controller]")]
 public sealed class GoogleAuthController : ControllerBase
 {
@@ -35,5 +38,3 @@ public sealed class GoogleAuthController : ControllerBase
             : BadRequest(result.ToErrors());
     }
 }
-
-

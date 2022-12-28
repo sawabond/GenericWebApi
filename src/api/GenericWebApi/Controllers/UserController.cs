@@ -1,11 +1,12 @@
 ﻿using DataAccess.Entities;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Authorization;
-using Core = Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Core = Microsoft.AspNetCore.Identity;
 
 namespace GenericWebApi.Controllers;
 
+// TODO: Remove links to data access
 [Route("api/[controller]")]
 public sealed class UserController : ControllerBase
 {
