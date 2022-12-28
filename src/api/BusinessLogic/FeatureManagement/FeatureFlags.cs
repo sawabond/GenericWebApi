@@ -3,4 +3,5 @@
 public enum FeatureFlags
 {
     EmailVerification,
+    GoogleAuthentication
 }

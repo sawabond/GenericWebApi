@@ -1,0 +1,87 @@
+{
+	"info": {
+		"_postman_id": "a2772f46-f50b-4266-8cac-9be8076649b0",
+		"name": "Google auth GenericWebApi",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20010497"
+	},
+	"item": [
+		{
+			"name": "Get token result",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/GoogleAuth/login-callback?returnUrl=https%3A%2F%2Flocalhost%3A7010%2Fswagger%2Findex.html",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"GoogleAuth",
+						"login-callback"
+					],
+					"query": [
+						{
+							"key": "returnUrl",
+							"value": "https%3A%2F%2Flocalhost%3A7010%2Fswagger%2Findex.html"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Google login",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/GoogleAuth/login?returnUrl=https%3A%2F%2Flocalhost%3A7010%2Fswagger%2Findex.html",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"GoogleAuth",
+						"login"
+					],
+					"query": [
+						{
+							"key": "returnUrl",
+							"value": "https%3A%2F%2Flocalhost%3A7010%2Fswagger%2Findex.html"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "https://localhost:7010",
+			"type": "string"
+		}
+	]
+}

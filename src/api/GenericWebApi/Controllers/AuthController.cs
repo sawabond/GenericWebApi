@@ -1,18 +1,15 @@
 ﻿using AutoMapper;
 using BusinessLogic.Abstractions;
+using BusinessLogic.FeatureManagement;
 using BusinessLogic.Models.AppUser;
 using GenericWebApi.Extensions;
 using GenericWebApi.Requests.Auth;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNet.Identity;
 using Microsoft.FeatureManagement.Mvc;
-using BusinessLogic.FeatureManagement;
 
 namespace GenericWebApi.Controllers;
 
 [Route("api/[controller]")]
-[ApiController]
 public sealed class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
