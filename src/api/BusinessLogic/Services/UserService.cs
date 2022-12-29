@@ -17,6 +17,20 @@ internal sealed class UserService : IUserService
         _mapper = mapper;
     }
 
+    public async Task<Result<UserViewModel>> GetUserById(string id)
+    {
+        var user = await _repository.GetAsync(id);
+
+        if (user is null)
+        {
+            return Result.Fail($"User with id {id} was not found");
+        }
+
+        var viewModel = _mapper.Map<UserViewModel>(user);
+
+        return Result.Ok(viewModel);
+    }
+
     public async Task<Result<IEnumerable<UserViewModel>>> GetUsersAsync(AppUserFilter filter = null)
     {
         var users = await _repository.GetAllAsync(filter);

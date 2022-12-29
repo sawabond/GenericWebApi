@@ -1,34 +1,31 @@
 ﻿using BusinessLogic.Abstractions;
 using BusinessLogic.Models.AppUser;
-using DataAccess.Entities;
 using GenericWebApi.Extensions;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Core = Microsoft.AspNetCore.Identity;
 
 namespace GenericWebApi.Controllers;
 
-// TODO: Remove links to data access
 [Route("api/[controller]")]
 public sealed class UserController : ControllerBase
 {
-    private readonly Core.UserManager<AppUser> _userManager;
     private readonly IUserService _userService;
 
-    public UserController(Core.UserManager<AppUser> userManager, IUserService userService)
+    public UserController(IUserService userService)
     {
-        _userManager = userManager;
         _userService = userService;
     }
 
-    [HttpGet("current-user")]
+    [HttpGet("current")]
     [Authorize]
     public async Task<IActionResult> GetCurrentUser()
     {
-        var user = await _userManager.FindByIdAsync(User.Identity.GetUserId());
+        var userResult = await _userService.GetUserById(User.Identity.GetUserId());
 
-        return Ok(user);
+        return userResult.IsSuccess
+            ? Ok(userResult.ToResponse()) 
+            : BadRequest(userResult.ToResponse());
     }
 
     [HttpGet]
