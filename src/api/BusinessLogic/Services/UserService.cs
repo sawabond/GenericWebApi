@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BusinessLogic.Abstractions;
+using BusinessLogic.Filtering.AppUser;
 using BusinessLogic.Models.AppUser;
 using DataAccess.Abstractions;
 using FluentResults;

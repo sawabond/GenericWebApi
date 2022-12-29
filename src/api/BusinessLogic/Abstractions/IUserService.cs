@@ -1,4 +1,5 @@
-﻿using BusinessLogic.Models.AppUser;
+﻿using BusinessLogic.Filtering.AppUser;
+using BusinessLogic.Models.AppUser;
 using FluentResults;
 
 namespace BusinessLogic.Abstractions;

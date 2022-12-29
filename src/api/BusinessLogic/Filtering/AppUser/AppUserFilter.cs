@@ -1,9 +1,9 @@
 ﻿using AutoFilterer.Attributes;
 using AutoFilterer.Enums;
-using BusinessLogic.Filtering;
+using BusinessLogic.Filtering.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BusinessLogic.Models.AppUser;
+namespace BusinessLogic.Filtering.AppUser;
 
 public sealed class AppUserFilter : CustomFilterBase
 {

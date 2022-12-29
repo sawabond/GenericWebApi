@@ -1,5 +1,5 @@
 ﻿using BusinessLogic.Abstractions;
-using BusinessLogic.Models.AppUser;
+using BusinessLogic.Filtering.AppUser;
 using GenericWebApi.Extensions;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Authorization;
@@ -32,5 +32,29 @@ public sealed class UserController : ControllerBase
         var usersResult = await _userService.GetUsersAsync(filter);
 
         return usersResult.ToObjectResponse(filter);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateUser()
+    {
+        throw new NotImplementedException();
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> UpdateUser()
+    {
+        throw new NotImplementedException();
+    }
+
+    [HttpPatch]
+    public async Task<IActionResult> PatchUser()
+    {
+        throw new NotImplementedException();
+    }
+
+    [HttpDelete]
+    public async Task<IActionResult> DeleteUser()
+    {
+        throw new NotImplementedException();
     }
 }

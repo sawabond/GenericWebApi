@@ -2,7 +2,7 @@
 using AutoFilterer.Types;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BusinessLogic.Filtering;
+namespace BusinessLogic.Filtering.Abstractions;
 
 public class CustomFilterBase : PaginationFilterBase
 {
