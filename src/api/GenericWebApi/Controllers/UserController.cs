@@ -23,9 +23,7 @@ public sealed class UserController : ControllerBase
     {
         var userResult = await _userService.GetUserById(User.Identity.GetUserId());
 
-        return userResult.IsSuccess
-            ? Ok(userResult.ToResponse()) 
-            : BadRequest(userResult.ToResponse());
+        return userResult.ToObjectResponse();
     }
 
     [HttpGet]
@@ -33,8 +31,6 @@ public sealed class UserController : ControllerBase
     {
         var usersResult = await _userService.GetUsersAsync(filter);
 
-        return usersResult.IsSuccess
-            ? Ok(usersResult.ToResponse(filter)) 
-            : BadRequest(usersResult.ToResponse(filter));
+        return usersResult.ToObjectResponse(filter);
     }
 }

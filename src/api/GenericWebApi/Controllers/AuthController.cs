@@ -26,9 +26,7 @@ public sealed class AuthController : ControllerBase
     {
         var result = await _authService.RegisterAsync(_mapper.Map<RegisterModel>(request));
 
-        return result.IsSuccess
-            ? Ok(result.ToResponse())
-            : BadRequest(result.ToResponse());
+        return result.ToObjectResponse();
     }
 
     [HttpPost("login")]
@@ -36,9 +34,7 @@ public sealed class AuthController : ControllerBase
     {
         var result = await _authService.LoginAsync(_mapper.Map<LoginModel>(request));
 
-        return result.IsSuccess
-            ? Ok(result.ToResponse())
-            : BadRequest(result.ToResponse());
+        return result.ToObjectResponse();
     }
 
     [FeatureGate(nameof(FeatureFlags.EmailVerification))]
