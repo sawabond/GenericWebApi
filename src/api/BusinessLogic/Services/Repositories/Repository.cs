@@ -1,4 +1,6 @@
-﻿using DataAccess;
+﻿using AutoFilterer.Extensions;
+using AutoFilterer.Types;
+using DataAccess;
 using DataAccess.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
@@ -32,9 +34,9 @@ internal abstract class Repository<TEntity> : IRepository<TEntity>
         return Entities.Where(expression);
     }
 
-    public async Task<IQueryable<TEntity>> GetAllAsync()
+    public async Task<IQueryable<TEntity>> GetAllAsync(PaginationFilterBase filter = null)
     {
-        return Entities.AsQueryable();
+        return Entities.AsQueryable().ApplyFilter(filter);
     }
 
     public async Task<TEntity> GetAsync(string id)

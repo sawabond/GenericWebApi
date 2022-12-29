@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.Abstractions;
+using BusinessLogic.Models.AppUser;
 using DataAccess.Entities;
 using GenericWebApi.Extensions;
 using Microsoft.AspNet.Identity;
@@ -31,12 +32,12 @@ public sealed class UserController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllUsers()
+    public async Task<IActionResult> GetAllUsers([FromQuery] AppUserFilter filter)
     {
-        var usersResult = await _userService.GetUsersAsync();
+        var usersResult = await _userService.GetUsersAsync(filter);
 
         return usersResult.IsSuccess
-            ? Ok(usersResult.ToResponse()) 
-            : BadRequest(usersResult.ToResponse());
+            ? Ok(usersResult.ToResponse(filter)) 
+            : BadRequest(usersResult.ToResponse(filter));
     }
 }

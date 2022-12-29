@@ -5,5 +5,5 @@ namespace BusinessLogic.Abstractions;
 
 public interface IUserService
 {
-    Task<Result<IEnumerable<UserViewModel>>> GetUsersAsync();
+    Task<Result<IEnumerable<UserViewModel>>> GetUsersAsync(AppUserFilter filter);
 }

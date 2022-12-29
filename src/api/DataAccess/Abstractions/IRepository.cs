@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using AutoFilterer.Types;
+using System.Linq.Expressions;
 
 namespace DataAccess.Abstractions;
 
@@ -6,7 +7,7 @@ public interface IRepository<TEntity> where TEntity : IEntity<string>
 {
     Task<TEntity> GetAsync(string id);
 
-    Task<IQueryable<TEntity>> GetAllAsync();
+    Task<IQueryable<TEntity>> GetAllAsync(PaginationFilterBase filter);
 
     Task AddAsync(TEntity entity);
 

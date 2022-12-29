@@ -7,10 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoFilterer.Generators" Version="2.13.0" />
     <PackageReference Include="AutoMapper" Version="12.0.0" />
     <PackageReference Include="FluentResults" Version="3.15.1" />
     <PackageReference Include="FluentValidation" Version="11.4.0" />
     <PackageReference Include="MailKit" Version="3.4.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="7.0.0" />
   </ItemGroup>
