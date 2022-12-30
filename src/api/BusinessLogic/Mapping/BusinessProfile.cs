@@ -10,5 +10,7 @@ public class BusinessProfile : Profile
 	{
 		CreateMap<RegisterModel, AppUser>();
 		CreateMap<AppUser, UserViewModel>();
+
+		CreateMap<PatchUserModel, AppUser>();
 	}
 }

@@ -22,6 +22,11 @@ public static class ResultExtensions
     public static PagingResponseModel<T> ToResponse<T>(this Result<T> @this, PaginationFilterBase filter) =>
         new PagingResponseModel<T>(@this.ValueOrDefault, @this.ToErrors().ToArray(), filter.Page, filter.PerPage);
 
+    public static IActionResult ToNoContent(this Result @this) =>
+        @this.IsSuccess
+        ? new NoContentResult()
+        : new BadRequestObjectResult(@this.ToResponse());
+
     public static ObjectResult ToObjectResponse<T>(this Result<T> @this) =>
         @this.IsSuccess
         ? new OkObjectResult(@this.ToResponse())

@@ -55,4 +55,20 @@ internal sealed class UserService : IUserService
 
         return Result.Ok(viewModels);
     }
+
+    public async Task<Result> PatchUserAsync(string id, PatchUserModel model)
+    {
+        var user = await _repository.GetAsync(id);
+
+        if (user is null)
+        {
+            return Result.Fail($"User with id {id} was not found");
+        }
+
+        _mapper.Map(model, user);
+
+        return await _repository.ConfirmAsync() > 0
+            ? Result.Ok()
+            : Result.Fail("Unable to save changes while patching user");
+    }
 }

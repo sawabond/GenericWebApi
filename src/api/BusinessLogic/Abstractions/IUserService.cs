@@ -12,4 +12,6 @@ public interface IUserService
 
     Task<Result> DeleteUserAsync(string id);
 
+    Task<Result> PatchUserAsync(string id, PatchUserModel model);
+
 }

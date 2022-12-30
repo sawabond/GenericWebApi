@@ -1,5 +1,6 @@
 ﻿using BusinessLogic.Abstractions;
 using BusinessLogic.Filtering.AppUser;
+using BusinessLogic.Models.AppUser;
 using GenericWebApi.Extensions;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Authorization;
@@ -46,10 +47,12 @@ public sealed class UserController : ControllerBase
         throw new NotImplementedException();
     }
 
-    [HttpPatch]
-    public async Task<IActionResult> PatchUser()
+    [HttpPatch("{id:guid}")]
+    public async Task<IActionResult> PatchUser(string id, [FromBody] PatchUserModel model)
     {
-        throw new NotImplementedException();
+        var patchUserResult = await _userService.PatchUserAsync(id, model);
+
+        return patchUserResult.ToNoContent();
     }
 
     [HttpDelete("{id:guid}")]
@@ -57,8 +60,6 @@ public sealed class UserController : ControllerBase
     {
         var deleteUserResult = await _userService.DeleteUserAsync(id);
 
-        return deleteUserResult.IsSuccess
-            ? NoContent()
-            : BadRequest(deleteUserResult.ToResponse());
+        return deleteUserResult.ToNoContent();
     }
 }
