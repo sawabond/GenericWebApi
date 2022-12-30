@@ -21,7 +21,7 @@ public sealed class UserController : ControllerBase
     [Authorize]
     public async Task<IActionResult> GetCurrentUser()
     {
-        var userResult = await _userService.GetUserById(User.Identity.GetUserId());
+        var userResult = await _userService.GetUserByIdAsync(User.Identity.GetUserId());
 
         return userResult.ToObjectResponse();
     }
@@ -52,9 +52,13 @@ public sealed class UserController : ControllerBase
         throw new NotImplementedException();
     }
 
-    [HttpDelete]
-    public async Task<IActionResult> DeleteUser()
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> DeleteUser(string id)
     {
-        throw new NotImplementedException();
+        var deleteUserResult = await _userService.DeleteUserAsync(id);
+
+        return deleteUserResult.IsSuccess
+            ? NoContent()
+            : BadRequest(deleteUserResult.ToResponse());
     }
 }

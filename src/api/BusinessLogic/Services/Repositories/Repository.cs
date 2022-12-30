@@ -58,4 +58,7 @@ internal abstract class Repository<TEntity> : IRepository<TEntity>
     {
         Entities.Update(entity);
     }
+
+    public async Task<int> ConfirmAsync() =>
+        await Context.SaveChangesAsync();
 }

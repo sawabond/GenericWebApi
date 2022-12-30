@@ -8,6 +8,8 @@ public interface IUserService
 {
     Task<Result<IEnumerable<UserViewModel>>> GetUsersAsync(AppUserFilter filter);
 
-    Task<Result<UserViewModel>> GetUserById(string id);
+    Task<Result<UserViewModel>> GetUserByIdAsync(string id);
+
+    Task<Result> DeleteUserAsync(string id);
 
 }

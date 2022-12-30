@@ -20,4 +20,6 @@ public interface IRepository<TEntity> where TEntity : IEntity<string>
     void Remove(TEntity entity);
 
     void RemoveRange(IEnumerable<TEntity> entities);
+
+    Task<int> ConfirmAsync();
 }

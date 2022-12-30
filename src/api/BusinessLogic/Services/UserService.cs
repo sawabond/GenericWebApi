@@ -18,7 +18,22 @@ internal sealed class UserService : IUserService
         _mapper = mapper;
     }
 
-    public async Task<Result<UserViewModel>> GetUserById(string id)
+    public async Task<Result> DeleteUserAsync(string id)
+    {
+        var user = await _repository.GetAsync(id);
+
+        if (user is null)
+        {
+            return Result.Fail($"User with id {id} was not found");
+        }
+
+        _repository.Remove(user);
+        return await _repository.ConfirmAsync() > 0
+            ? Result.Ok()
+            : Result.Fail("Unable to save changes while deleting user");
+    }
+
+    public async Task<Result<UserViewModel>> GetUserByIdAsync(string id)
     {
         var user = await _repository.GetAsync(id);
 
