@@ -43,12 +43,6 @@ public sealed class UserController : ControllerBase
         return createUserResult.ToObjectResponse();
     }
 
-    [HttpPut("{id:guid}")]
-    public async Task<IActionResult> UpdateUser()
-    {
-        throw new NotImplementedException();
-    }
-
     [HttpPatch("{id:guid}")]
     public async Task<IActionResult> PatchUser(string id, [FromBody] PatchUserModel model)
     {

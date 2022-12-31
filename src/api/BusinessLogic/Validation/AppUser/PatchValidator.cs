@@ -1,0 +1,16 @@
+﻿using BusinessLogic.Models.AppUser;
+using FluentValidation;
+using static BusinessLogic.Validation.AppUser.Rules;
+
+namespace BusinessLogic.Validation.AppUser;
+
+internal sealed class PatchValidator : AbstractValidator<PatchUserModel>
+{
+    public PatchValidator()
+    {
+        RuleFor(x => x.Email).EmailAddress();
+        RuleFor(x => x.EmailConfirmed).NotEmpty();
+        RuleFor(x => x.PhoneNumber).Matches(PhoneNumberRegex);
+        RuleFor(x => x.UserName).NotEmpty().Length(3, 20);
+    }
+}

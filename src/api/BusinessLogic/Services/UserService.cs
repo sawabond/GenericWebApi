@@ -2,6 +2,7 @@
 using BusinessLogic.Abstractions;
 using BusinessLogic.Filtering.AppUser;
 using BusinessLogic.Models.AppUser;
+using BusinessLogic.Validation.Abstractions;
 using DataAccess.Abstractions;
 using DataAccess.Entities;
 using FluentResults;
@@ -14,16 +15,25 @@ internal sealed class UserService : IUserService
     private readonly IUserRepository _repository;
     private readonly IMapper _mapper;
     private readonly UserManager<AppUser> _userManager;
+    private readonly IModelValidator _validator;
 
-    public UserService(IUserRepository repository, IMapper mapper, UserManager<AppUser> userManager)
+    public UserService(
+        IUserRepository repository, 
+        IMapper mapper, 
+        UserManager<AppUser> userManager,
+        IModelValidator validator)
     {
         _repository = repository;
         _mapper = mapper;
         _userManager = userManager;
+        _validator = validator;
     }
 
     public async Task<Result<string>> CreateUserAsync(CreateUserModel model)
     {
+        var validationResult = _validator.Validate(model);
+        if (!validationResult.IsSuccess) return validationResult;
+
         var user = _mapper.Map<AppUser>(model);
 
         var existingUser = (await _repository
@@ -81,6 +91,9 @@ internal sealed class UserService : IUserService
 
     public async Task<Result> PatchUserAsync(string id, PatchUserModel model)
     {
+        var validationResult = _validator.Validate(model);
+        if (!validationResult.IsSuccess) return validationResult;
+
         var user = await _repository.GetAsync(id);
 
         if (user is null)
