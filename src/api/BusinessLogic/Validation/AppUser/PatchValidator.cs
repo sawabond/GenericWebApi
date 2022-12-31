@@ -9,8 +9,7 @@ internal sealed class PatchValidator : AbstractValidator<PatchUserModel>
     public PatchValidator()
     {
         RuleFor(x => x.Email).EmailAddress();
-        RuleFor(x => x.EmailConfirmed).NotEmpty();
         RuleFor(x => x.PhoneNumber).Matches(PhoneNumberRegex);
-        RuleFor(x => x.UserName).NotEmpty().Length(3, 20);
+        RuleFor(x => x.UserName).Length(3, 20);
     }
 }

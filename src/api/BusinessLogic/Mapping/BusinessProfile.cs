@@ -11,7 +11,8 @@ public class BusinessProfile : Profile
 		CreateMap<RegisterModel, AppUser>();
 		CreateMap<AppUser, UserViewModel>();
 
-		CreateMap<PatchUserModel, AppUser>();
-		CreateMap<CreateUserModel, AppUser>();
+		CreateMap<PatchUserModel, AppUser>()
+            .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember is not null));
+        CreateMap<CreateUserModel, AppUser>();
 	}
 }
