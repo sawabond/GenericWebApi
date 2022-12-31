@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.Abstractions;
+using BusinessLogic.Core;
 using BusinessLogic.Filtering.AppUser;
 using BusinessLogic.Models.AppUser;
 using GenericWebApi.Extensions;
@@ -19,7 +20,7 @@ public sealed class UserController : ControllerBase
     }
 
     [HttpGet("current")]
-    [Authorize]
+    [Authorize(Roles = Roles.User)]
     public async Task<IActionResult> GetCurrentUser()
     {
         var userResult = await _userService.GetUserByIdAsync(User.Identity.GetUserId());
@@ -28,6 +29,7 @@ public sealed class UserController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Roles = Roles.AdminOrModer)]
     public async Task<IActionResult> GetAllUsers([FromQuery] AppUserFilter filter)
     {
         var usersResult = await _userService.GetUsersAsync(filter);
@@ -36,14 +38,16 @@ public sealed class UserController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateUser([FromBody] CreateUserModel model)
+    [Authorize(Roles = Roles.Admin)]
+    public async Task<IActionResult> CreateUser([FromBody] CreateUserModel model, [FromQuery] string role)
     {
-        var createUserResult = await _userService.CreateUserAsync(model);
+        var createUserResult = await _userService.CreateUserAsync(model, role);
 
         return createUserResult.ToObjectResponse();
     }
 
     [HttpPatch("{id:guid}")]
+    [Authorize(Roles = Roles.Admin)]
     public async Task<IActionResult> PatchUser(string id, [FromBody] PatchUserModel model)
     {
         var patchUserResult = await _userService.PatchUserAsync(id, model);
@@ -52,6 +56,7 @@ public sealed class UserController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
+    [Authorize(Roles = Roles.Admin)]
     public async Task<IActionResult> DeleteUser(string id)
     {
         var deleteUserResult = await _userService.DeleteUserAsync(id);

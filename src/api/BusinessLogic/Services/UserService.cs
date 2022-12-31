@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BusinessLogic.Abstractions;
+using BusinessLogic.Core;
 using BusinessLogic.Filtering.AppUser;
 using BusinessLogic.Models.AppUser;
 using BusinessLogic.Validation.Abstractions;
@@ -29,10 +30,12 @@ internal sealed class UserService : IUserService
         _validator = validator;
     }
 
-    public async Task<Result<string>> CreateUserAsync(CreateUserModel model)
+    public async Task<Result<string>> CreateUserAsync(CreateUserModel model, string role)
     {
         var validationResult = _validator.Validate(model);
         if (!validationResult.IsSuccess) return validationResult;
+
+        if (Roles.AllowedRoles.Contains(role) is false) return Result.Fail($"The role {role} is not allowed");
 
         var user = _mapper.Map<AppUser>(model);
 
@@ -46,7 +49,8 @@ internal sealed class UserService : IUserService
             return Result.Fail($"The user already exists");
         }
 
-        return (await _userManager.CreateAsync(user, model.Password)).Succeeded
+        return (await _userManager.CreateAsync(user, model.Password)).Succeeded 
+            && (await _userManager.AddToRoleAsync(user, role)).Succeeded
             ? Result.Ok(user.Id)
             : Result.Fail("Unable to save changes while creating the user");
     }
