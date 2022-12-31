@@ -14,4 +14,5 @@ public interface IUserService
 
     Task<Result> PatchUserAsync(string id, PatchUserModel model);
 
+    Task<Result<string>> CreateUserAsync(CreateUserModel model);
 }

@@ -3,7 +3,9 @@ using BusinessLogic.Abstractions;
 using BusinessLogic.Filtering.AppUser;
 using BusinessLogic.Models.AppUser;
 using DataAccess.Abstractions;
+using DataAccess.Entities;
 using FluentResults;
+using Microsoft.AspNetCore.Identity;
 
 namespace BusinessLogic.Services;
 
@@ -11,11 +13,32 @@ internal sealed class UserService : IUserService
 {
     private readonly IUserRepository _repository;
     private readonly IMapper _mapper;
+    private readonly UserManager<AppUser> _userManager;
 
-    public UserService(IUserRepository repository, IMapper mapper)
+    public UserService(IUserRepository repository, IMapper mapper, UserManager<AppUser> userManager)
     {
         _repository = repository;
         _mapper = mapper;
+        _userManager = userManager;
+    }
+
+    public async Task<Result<string>> CreateUserAsync(CreateUserModel model)
+    {
+        var user = _mapper.Map<AppUser>(model);
+
+        var existingUser = (await _repository
+            .FindAsync(u => u.UserName == model.UserName 
+            || u.Email == model.Email
+            || u.PhoneNumber == model.PhoneNumber)).FirstOrDefault();
+
+        if (existingUser is not null)
+        {
+            return Result.Fail($"The user already exists");
+        }
+
+        return (await _userManager.CreateAsync(user, model.Password)).Succeeded
+            ? Result.Ok(user.Id)
+            : Result.Fail("Unable to save changes while creating the user");
     }
 
     public async Task<Result> DeleteUserAsync(string id)

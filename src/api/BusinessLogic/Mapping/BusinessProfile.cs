@@ -12,5 +12,6 @@ public class BusinessProfile : Profile
 		CreateMap<AppUser, UserViewModel>();
 
 		CreateMap<PatchUserModel, AppUser>();
+		CreateMap<CreateUserModel, AppUser>();
 	}
 }

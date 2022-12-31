@@ -36,12 +36,14 @@ public sealed class UserController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateUser()
+    public async Task<IActionResult> CreateUser([FromBody] CreateUserModel model)
     {
-        throw new NotImplementedException();
+        var createUserResult = await _userService.CreateUserAsync(model);
+
+        return createUserResult.ToObjectResponse();
     }
 
-    [HttpPut]
+    [HttpPut("{id:guid}")]
     public async Task<IActionResult> UpdateUser()
     {
         throw new NotImplementedException();
