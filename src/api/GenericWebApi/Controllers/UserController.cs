@@ -28,6 +28,15 @@ public sealed class UserController : ControllerBase
         return userResult.ToObjectResponse();
     }
 
+    [HttpGet("{id:guid}")]
+    [Authorize(Roles = Roles.User)]
+    public async Task<IActionResult> GetUserById(string id)
+    {
+        var userResult = await _userService.GetUserByIdAsync(id);
+
+        return userResult.ToObjectResponse();
+    }
+
     [HttpGet]
     [Authorize(Roles = Roles.AdminOrModer)]
     public async Task<IActionResult> GetAllUsers([FromQuery] AppUserFilter filter)
