@@ -2,6 +2,7 @@
 using BusinessLogic.Abstractions;
 using BusinessLogic.Mapping;
 using BusinessLogic.Models.AppUser;
+using BusinessLogic.Models.Mail;
 using BusinessLogic.Services;
 using BusinessLogic.Validation.Abstractions;
 using DataAccess.Entities;
@@ -39,6 +40,9 @@ public sealed class AuthServiceTests
         _userManager
             .Setup(x => x.ConfirmEmailAsync(It.IsAny<AppUser>(), It.IsAny<string>()))
             .ReturnsAsync(IdentityResult.Success);
+        _userManager
+            .Setup(x => x.GenerateEmailConfirmationTokenAsync(It.IsAny<AppUser>()))
+            .ReturnsAsync("Some token");
 
 
         _signInManager = MockHelpers.TestSignInManager<AppUser>();
@@ -52,7 +56,12 @@ public sealed class AuthServiceTests
 		_tokenService.Setup(x => x.CreateTokenAsync(It.IsAny<AppUser>())).ReturnsAsync(Result.Ok("Some valid jwt"));
 
 		_mailService = new Mock<IMailService>();
-		_validator = new Mock<IModelValidator>();
+
+        _mailService
+            .Setup(x => x.SendAsync(It.IsAny<MailData>()))
+            .ReturnsAsync(Result.Ok());
+
+        _validator = new Mock<IModelValidator>();
 
 		_validator.Setup(v => v.Validate(It.IsAny<It.IsAnyType>())).Returns(Result.Ok());
 
@@ -229,5 +238,53 @@ public sealed class AuthServiceTests
         var result = await _authService.ConfirmEmailAsync(new ConfirmEmailModel(Guid.Empty.ToString(), "email_token"));
 
         result.IsSuccess.Should().BeTrue();
+    }
+
+    [Fact]
+    public async void SendEmailConfirmationAsync_ReturnsFail_IfUserNotFound()
+    {
+        _userManager.Setup(x => x.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(null as AppUser);
+
+        var result = await _authService.SendEmailConfirmationAsync(Guid.Empty.ToString(), null, null);
+
+        result.IsSuccess.Should().BeFalse();
+        result.Errors.Should().ContainEquivalentOf(new Error($"User with id {Guid.Empty} was not found"));
+    }
+
+    [Fact]
+    public async void SendEmailConfirmationAsync_ReturnsFail_IfEmailAlreadyConfirmed()
+    {
+        _userManager
+            .Setup(x => x.FindByIdAsync(It.IsAny<string>()))
+            .ReturnsAsync(new AppUser { EmailConfirmed = true });
+
+        var result = await _authService.SendEmailConfirmationAsync(Guid.Empty.ToString(), null, null);
+
+        result.IsSuccess.Should().BeFalse();
+        result.Errors.Should().ContainEquivalentOf(new Error($"Email of the user is already confirmed"));
+    }
+
+    [Fact]
+    public async void SendEmailConfirmationAsync_ReturnsFail_IfEmailNotSent()
+    {
+        _mailService
+            .Setup(x => x.SendAsync(It.IsAny<MailData>()))
+            .ReturnsAsync(Result.Fail("Sending mail errors"));
+
+        var result = await _authService
+            .SendEmailConfirmationAsync(Guid.Empty.ToString(), "confirm url", "callback url");
+
+        result.IsSuccess.Should().BeFalse();
+        result.Errors.Should().ContainEquivalentOf(new Error("Sending mail errors"));
+    }
+
+    [Fact]
+    public async void SendEmailConfirmationAsync_ReturnsOk_IfEmailSent()
+    {
+        var result = await _authService
+            .SendEmailConfirmationAsync(Guid.Empty.ToString(), "confirm url", "callback url");
+
+        result.IsSuccess.Should().BeTrue();
+        result.Errors.Should().BeEmpty();
     }
 }

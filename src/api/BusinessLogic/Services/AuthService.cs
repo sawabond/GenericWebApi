@@ -110,7 +110,7 @@ public sealed class AuthService : IAuthService
 
         if (user.EmailConfirmed)
         {
-            return Result.Fail("Email of user is already confirmed");
+            return Result.Fail("Email of the user is already confirmed");
         }
 
         var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
