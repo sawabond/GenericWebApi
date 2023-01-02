@@ -1,4 +1,5 @@
-﻿using BusinessLogic;
+﻿using AutoFilterer.Swagger;
+using BusinessLogic;
 using BusinessLogic.Extensions;
 using BusinessLogic.Models;
 using BusinessLogic.Options;
@@ -69,6 +70,7 @@ public static class ServiceCollectionExtensions
                 Type = SecuritySchemeType.ApiKey
             });
             c.OperationFilter<SecurityRequirementsOperationFilter>();
+            c.UseAutoFiltererParameters();
         });
 
         return services;

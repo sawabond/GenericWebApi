@@ -4,12 +4,13 @@ using static BusinessLogic.Validation.AppUser.Rules;
 
 namespace BusinessLogic.Validation.AppUser;
 
-internal sealed class RegisterValidator : AbstractValidator<UserRegisterModel>
+internal sealed class CreateValidator : AbstractValidator<UserCreateModel>
 {
-	public RegisterValidator()
-	{
+    public CreateValidator()
+    {
+        RuleFor(x => x.Email).EmailAddress();
+        RuleFor(x => x.PhoneNumber).Matches(PhoneNumberRegex);
         RuleFor(x => x.UserName).NotEmpty().Length(3, 20);
         RuleFor(x => x.Password).Matches(PasswordRegex).WithMessage(PasswordMessage);
-        RuleFor(x => x.Email).EmailAddress().Length(3, 100);
     }
 }

@@ -28,7 +28,7 @@ internal sealed class GoogleAuthService : IGoogleAuthService
         _tokenService = tokenService;
     }
 
-    public async Task<Result<UserViewModel>> LoginUserAsync()
+    public async Task<Result<UserAuthModel>> LoginUserAsync()
     {
         var loginInfo = await _signInManager.GetExternalLoginInfoAsync();
 
@@ -81,7 +81,7 @@ internal sealed class GoogleAuthService : IGoogleAuthService
         Result.Ok(_signInManager.ConfigureExternalAuthenticationProperties("google", redirectUrl));
 
 
-    private async Task<Result<UserViewModel>> MapUserToViewWithToken(ITokenService tokenService, AppUser currentUser)
+    private async Task<Result<UserAuthModel>> MapUserToViewWithToken(ITokenService tokenService, AppUser currentUser)
     {
         var tokenResult = await tokenService.CreateTokenAsync(currentUser);
 
@@ -90,6 +90,6 @@ internal sealed class GoogleAuthService : IGoogleAuthService
             return Result.Fail(tokenResult.Errors);
         }
 
-        return Result.Ok(_mapper.Map<UserViewModel>(currentUser) with { Token = tokenResult.Value });
+        return Result.Ok(_mapper.Map<UserAuthModel>(currentUser) with { Token = tokenResult.Value });
     }
 }

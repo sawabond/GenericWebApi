@@ -6,3 +6,9 @@ public record ResponseModel<T>
 
 public record ResponseModel
     (string[] Errors);
+
+public record PagingResponseModel<T>
+    (T Data,
+    string[] Errors,
+    int PageNumber,
+    int PageSize);

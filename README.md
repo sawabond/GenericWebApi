@@ -8,17 +8,20 @@ This is a generic web project template. Users can clone it or create new reposit
 - 3-layer architecture
 - Entity Framework Core code first
 - JWT Bearer auth
-- FluentValidation, AutoMapper
+- FluentValidation, AutoMapper, AutoFilterer
 
 ## Current features
 
-- Authorization with roles and basic Admin, Moder, User roles
-- Account confirmation
-- Google auth
+- Role-based auth using basic 'Admin', 'Moder' and 'User' roles
+- Account confirmation through email
+- Google authentication
+- Admin controller for user CRUD
 
 ## Features planned
 
-- Admin controller for user CRUD
+- Unit testing coverage
+- Integration testing coverage
+- CI/CD process
 
 ## Usage
 

@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.Abstractions;
+using BusinessLogic.Core;
 using DataAccess.Entities;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
@@ -45,7 +46,7 @@ internal sealed class Seeder : ISeeder
 
         var roles = await _userManager.GetRolesAsync(admin);
 
-        var expectedRoles = new string[] { "Admin", "User", "Moder" };
+        var expectedRoles = new string[] { Roles.Admin, Roles.User, Roles.Moder };
 
         foreach (var expectedRole in expectedRoles)
         {
