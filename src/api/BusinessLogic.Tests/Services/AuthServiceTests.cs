@@ -28,11 +28,18 @@ public sealed class AuthServiceTests
 		_userManager
 			.Setup(x => x.FindByNameAsync(It.IsAny<string>())).ReturnsAsync(User);
         _userManager
+            .Setup(x => x.FindByIdAsync(It.IsAny<string>()))
+            .ReturnsAsync(User);
+        _userManager
             .Setup(x => x.CheckPasswordAsync(It.IsAny<AppUser>(), It.IsAny<string>()))
             .ReturnsAsync(true);
         _userManager
             .Setup(x => x.CreateAsync(It.IsAny<AppUser>(), It.IsAny<string>()))
             .ReturnsAsync(IdentityResult.Success);
+        _userManager
+            .Setup(x => x.ConfirmEmailAsync(It.IsAny<AppUser>(), It.IsAny<string>()))
+            .ReturnsAsync(IdentityResult.Success);
+
 
         _signInManager = MockHelpers.TestSignInManager<AppUser>();
 
@@ -67,14 +74,20 @@ public sealed class AuthServiceTests
 
 	private UserLoginModel LoginModel => new UserLoginModel("name", "pass");
 	private UserRegisterModel RegisterModel => new UserRegisterModel("name", "pass", "email");
-	private AppUser User => new AppUser { UserName = "name", Email = "email" };
+	private AppUser User => new AppUser { Id = Guid.Empty.ToString(), UserName = "name", Email = "email" };
     private UserViewModel ViewModel => new UserViewModel
     {
+        Id = Guid.Empty.ToString(),
         UserName = "name",
         Email = "email",
     };
-    private UserAuthModel AuthModel => ViewModel as UserAuthModel with { Token = "Some valid jwt" };
-
+    private UserAuthModel AuthModel => new UserAuthModel
+    {
+        Id = Guid.Empty.ToString(),
+        UserName = "name",
+        Email = "email",
+        Token = "Some valid jwt",
+    };
 
     [Fact]
 	public async void Login_ReturnsFailedResultWithErrors_WhenModelIsNotValid()
@@ -178,10 +191,43 @@ public sealed class AuthServiceTests
     public async void Register_ReturnsSuccess_IfRegisteringSuccess()
     {
         var result = await _authService.RegisterAsync(RegisterModel);
-
+        
         result.IsSuccess.Should().BeTrue();
         result.Value.UserName.Should().Be(ViewModel.UserName);
         result.Value.Email.Should().Be(ViewModel.Email);
         result.Value.Id.Should().NotBeNullOrEmpty();
+    }
+
+    [Fact]
+    public async void ConfirmEmailAsync_ReturnsFail_IfUserNotFound()
+    {
+        _userManager
+            .Setup(x => x.FindByIdAsync(It.IsAny<string>()))
+            .ReturnsAsync(null as AppUser);
+
+        var result = await _authService.ConfirmEmailAsync(new ConfirmEmailModel(Guid.Empty.ToString(), "email_token"));
+
+        result.IsSuccess.Should().BeFalse();
+        result.Errors.Should().ContainEquivalentOf(new Error($"User with id {Guid.Empty} was not found"));
+    }
+
+    [Fact]
+    public async void ConfirmEmailAsync_ReturnsFail_IfUnableToConfirm()
+    {
+        _userManager
+            .Setup(x => x.ConfirmEmailAsync(It.IsAny<AppUser>(), It.IsAny<string>()))
+            .ReturnsAsync(IdentityResult.Failed(new IdentityError()));
+
+        var result = await _authService.ConfirmEmailAsync(new ConfirmEmailModel(Guid.Empty.ToString(), "email_token"));
+
+        result.IsSuccess.Should().BeFalse();
+    }
+
+    [Fact]
+    public async void ConfirmEmailAsync_ReturnsOk_IfSuccessfullyConfirmed()
+    {
+        var result = await _authService.ConfirmEmailAsync(new ConfirmEmailModel(Guid.Empty.ToString(), "email_token"));
+
+        result.IsSuccess.Should().BeTrue();
     }
 }
