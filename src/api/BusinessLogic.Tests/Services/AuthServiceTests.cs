@@ -30,6 +30,9 @@ public sealed class AuthServiceTests
         _userManager
             .Setup(x => x.CheckPasswordAsync(It.IsAny<AppUser>(), It.IsAny<string>()))
             .ReturnsAsync(true);
+        _userManager
+            .Setup(x => x.CreateAsync(It.IsAny<AppUser>(), It.IsAny<string>()))
+            .ReturnsAsync(IdentityResult.Success);
 
         _signInManager = MockHelpers.TestSignInManager<AppUser>();
 
@@ -64,14 +67,13 @@ public sealed class AuthServiceTests
 
 	private UserLoginModel LoginModel => new UserLoginModel("name", "pass");
 	private UserRegisterModel RegisterModel => new UserRegisterModel("name", "pass", "email");
-	private AppUser User => new AppUser { Id = Guid.Empty.ToString(), UserName = "name", Email = "email" };
-	private UserAuthModel AuthModel => new UserAuthModel
-	{
-		UserName = "name",
-		Email = "email",
-		Token = "Some valid jwt",
-		Id = Guid.Empty.ToString()
-	};
+	private AppUser User => new AppUser { UserName = "name", Email = "email" };
+    private UserViewModel ViewModel => new UserViewModel
+    {
+        UserName = "name",
+        Email = "email",
+    };
+    private UserAuthModel AuthModel => ViewModel as UserAuthModel with { Token = "Some valid jwt" };
 
 
     [Fact]
@@ -147,7 +149,7 @@ public sealed class AuthServiceTests
     }
 
     [Fact]
-    public async void Register_ReturnsFailedResultWithErrors_WhenModelIsNotValid()
+    public async void Register_ReturnsFailedResultWithErrors_IfModelIsNotValid()
     {
         var model = 
         _validator
@@ -158,5 +160,28 @@ public sealed class AuthServiceTests
 
         result.IsSuccess.Should().BeFalse();
         result.Errors.Should().ContainEquivalentOf(new Error("Validation errors"));
+    }
+
+    [Fact]
+    public async void Register_ReturnsFailedResultWithErrors_IfUnableToCreateUser()
+    {
+        _userManager
+             .Setup(x => x.CreateAsync(It.IsAny<AppUser>(), It.IsAny<string>()))
+             .ReturnsAsync(IdentityResult.Failed(new IdentityError()));
+
+        var result = await _authService.RegisterAsync(RegisterModel);
+
+        result.IsSuccess.Should().BeFalse();
+    }
+
+    [Fact]
+    public async void Register_ReturnsSuccess_IfRegisteringSuccess()
+    {
+        var result = await _authService.RegisterAsync(RegisterModel);
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value.UserName.Should().Be(ViewModel.UserName);
+        result.Value.Email.Should().Be(ViewModel.Email);
+        result.Value.Id.Should().NotBeNullOrEmpty();
     }
 }

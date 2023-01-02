@@ -64,7 +64,7 @@ public sealed class AuthService : IAuthService
         return await CreateTokenFor(user);
     }
 
-    public async Task<Result<UserAuthModel>> RegisterAsync(UserRegisterModel model)
+    public async Task<Result<UserViewModel>> RegisterAsync(UserRegisterModel model)
     {
         var validationResult = _validator.Validate(model);
         if (!validationResult.IsSuccess) return validationResult;
@@ -78,7 +78,7 @@ public sealed class AuthService : IAuthService
             return Result.Fail(identityResult.Errors.Select(e => e.Description));
         }
 
-        var userViewModel = _mapper.Map<UserAuthModel>(user);
+        var userViewModel = _mapper.Map<UserViewModel>(user);
 
         return Result.Ok(userViewModel);
     }
