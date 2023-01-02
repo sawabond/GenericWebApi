@@ -29,7 +29,7 @@ public sealed class UserController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
-    [Authorize(Roles = Roles.User)]
+    [Authorize(Roles = Roles.AdminOrModer)]
     public async Task<IActionResult> GetUserById(string id)
     {
         var userResult = await _userService.GetUserByIdAsync(id);
