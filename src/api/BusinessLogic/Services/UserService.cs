@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace BusinessLogic.Services;
 
-internal sealed class UserService : IUserService
+public sealed class UserService : IUserService
 {
     private readonly IUserRepository _repository;
     private readonly IMapper _mapper;

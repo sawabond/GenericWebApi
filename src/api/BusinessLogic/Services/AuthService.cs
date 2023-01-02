@@ -10,7 +10,7 @@ using System.Web;
 
 namespace BusinessLogic.Services;
 
-internal sealed class AuthService : IAuthService
+public sealed class AuthService : IAuthService
 {
     private readonly UserManager<AppUser> _userManager;
     private readonly SignInManager<AppUser> _signInManager;
@@ -58,11 +58,8 @@ internal sealed class AuthService : IAuthService
 
         if (result.Succeeded is false)
         {
-            return Result.Fail($"Invalid login attempt");
+            return Result.Fail("Invalid login attempt");
         }
-
-        var s = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-        var infos = await _signInManager.GetExternalLoginInfoAsync();
 
         return await CreateTokenFor(user);
     }

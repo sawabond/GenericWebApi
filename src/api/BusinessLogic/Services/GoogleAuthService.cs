@@ -9,7 +9,7 @@ using System.Security.Claims;
 
 namespace BusinessLogic.Services;
 
-internal sealed class GoogleAuthService : IGoogleAuthService
+public sealed class GoogleAuthService : IGoogleAuthService
 {
     private readonly SignInManager<AppUser> _signInManager;
     private readonly UserManager<AppUser> _userManager;

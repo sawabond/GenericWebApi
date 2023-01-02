@@ -4,7 +4,7 @@ using static BusinessLogic.Validation.AppUser.Rules;
 
 namespace BusinessLogic.Validation.AppUser;
 
-internal sealed class LoginValidator : AbstractValidator<UserLoginModel>
+public sealed class LoginValidator : AbstractValidator<UserLoginModel>
 {
 	public LoginValidator()
 	{
