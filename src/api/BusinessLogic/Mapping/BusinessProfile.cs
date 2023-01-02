@@ -8,11 +8,12 @@ public class BusinessProfile : Profile
 {
 	public BusinessProfile()
 	{
-		CreateMap<RegisterModel, AppUser>();
-		CreateMap<AppUser, UserViewModel>();
+		CreateMap<UserRegisterModel, AppUser>();
+		CreateMap<AppUser, UserAuthModel>();
+        CreateMap<AppUser, UserViewModel>();
 
-		CreateMap<PatchUserModel, AppUser>()
+        CreateMap<UserPatchModel, AppUser>()
             .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember is not null));
-        CreateMap<CreateUserModel, AppUser>();
+        CreateMap<UserCreateModel, AppUser>();
 	}
 }

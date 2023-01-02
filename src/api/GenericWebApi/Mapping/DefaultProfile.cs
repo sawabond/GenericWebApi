@@ -8,7 +8,7 @@ public class DefaultProfile : Profile
 {
 	public DefaultProfile()
 	{
-		CreateMap<RegisterRequest, RegisterModel>();
-		CreateMap<LoginRequest, LoginModel>();
+		CreateMap<RegisterRequest, UserRegisterModel>();
+		CreateMap<LoginRequest, UserLoginModel>();
 	}
 }

@@ -48,7 +48,7 @@ public sealed class UserController : ControllerBase
 
     [HttpPost]
     [Authorize(Roles = Roles.Admin)]
-    public async Task<IActionResult> CreateUser([FromBody] CreateUserModel model, [FromQuery] string role)
+    public async Task<IActionResult> CreateUser([FromBody] UserCreateModel model, [FromQuery] string role)
     {
         var createUserResult = await _userService.CreateUserAsync(model, role);
 
@@ -57,7 +57,7 @@ public sealed class UserController : ControllerBase
 
     [HttpPatch("{id:guid}")]
     [Authorize(Roles = Roles.Admin)]
-    public async Task<IActionResult> PatchUser(string id, [FromBody] PatchUserModel model)
+    public async Task<IActionResult> PatchUser(string id, [FromBody] UserPatchModel model)
     {
         var patchUserResult = await _userService.PatchUserAsync(id, model);
 

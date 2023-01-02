@@ -35,7 +35,7 @@ internal sealed class AuthService : IAuthService
         _mailService = mailService;
     }
 
-    public async Task<Result<UserViewModel>> LoginAsync(LoginModel model)
+    public async Task<Result<UserAuthModel>> LoginAsync(UserLoginModel model)
     {
         var validationResult = _validator.Validate(model);
         if (!validationResult.IsSuccess) return validationResult;
@@ -67,7 +67,7 @@ internal sealed class AuthService : IAuthService
         return await CreateTokenFor(user);
     }
 
-    public async Task<Result<UserViewModel>> RegisterAsync(RegisterModel model)
+    public async Task<Result<UserAuthModel>> RegisterAsync(UserRegisterModel model)
     {
         var validationResult = _validator.Validate(model);
         if (!validationResult.IsSuccess) return validationResult;
@@ -81,7 +81,7 @@ internal sealed class AuthService : IAuthService
             return Result.Fail(identityResult.Errors.Select(e => e.Description));
         }
 
-        var userViewModel = _mapper.Map<UserViewModel>(user);
+        var userViewModel = _mapper.Map<UserAuthModel>(user);
 
         return Result.Ok(userViewModel);
     }
@@ -137,16 +137,16 @@ internal sealed class AuthService : IAuthService
         return Result.Ok();
     }
 
-    private async Task<Result<UserViewModel>> CreateTokenFor(AppUser user)
+    private async Task<Result<UserAuthModel>> CreateTokenFor(AppUser user)
     {
         var tokenResult = await _tokenService.CreateTokenAsync(user);
 
         if (tokenResult.IsFailed)
         {
-            return Result.Ok(_mapper.Map<UserViewModel>(user)).WithErrors(tokenResult.Errors);
+            return Result.Ok(_mapper.Map<UserAuthModel>(user)).WithErrors(tokenResult.Errors);
         }
 
-        var userViewModel = _mapper.Map<UserViewModel>(user) with { Token = tokenResult.Value };
+        var userViewModel = _mapper.Map<UserAuthModel>(user) with { Token = tokenResult.Value };
 
         return Result.Ok(userViewModel);
     }

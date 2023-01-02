@@ -4,7 +4,7 @@ using static BusinessLogic.Validation.AppUser.Rules;
 
 namespace BusinessLogic.Validation.AppUser;
 
-internal sealed class PatchValidator : AbstractValidator<PatchUserModel>
+internal sealed class PatchValidator : AbstractValidator<UserPatchModel>
 {
     public PatchValidator()
     {

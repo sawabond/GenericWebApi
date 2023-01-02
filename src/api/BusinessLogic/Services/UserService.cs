@@ -30,7 +30,7 @@ internal sealed class UserService : IUserService
         _validator = validator;
     }
 
-    public async Task<Result<string>> CreateUserAsync(CreateUserModel model, string role)
+    public async Task<Result<string>> CreateUserAsync(UserCreateModel model, string role)
     {
         var validationResult = _validator.Validate(model);
         if (!validationResult.IsSuccess) return validationResult;
@@ -93,7 +93,7 @@ internal sealed class UserService : IUserService
         return Result.Ok(viewModels);
     }
 
-    public async Task<Result> PatchUserAsync(string id, PatchUserModel model)
+    public async Task<Result> PatchUserAsync(string id, UserPatchModel model)
     {
         var validationResult = _validator.Validate(model);
         if (!validationResult.IsSuccess) return validationResult;

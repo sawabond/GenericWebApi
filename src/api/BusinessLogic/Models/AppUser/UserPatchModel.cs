@@ -1,6 +1,6 @@
 ﻿namespace BusinessLogic.Models.AppUser;
 
-public sealed record PatchUserModel
+public sealed record UserPatchModel
     (string UserName,
     string Email,
     string PhoneNumber,

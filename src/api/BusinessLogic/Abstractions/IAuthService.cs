@@ -5,9 +5,9 @@ namespace BusinessLogic.Abstractions;
 
 public interface IAuthService
 {
-    Task<Result<UserViewModel>> RegisterAsync(RegisterModel model);
+    Task<Result<UserAuthModel>> RegisterAsync(UserRegisterModel model);
 
-    Task<Result<UserViewModel>> LoginAsync(LoginModel model);
+    Task<Result<UserAuthModel>> LoginAsync(UserLoginModel model);
 
     Task<Result> ConfirmEmailAsync(ConfirmEmailModel model);
 

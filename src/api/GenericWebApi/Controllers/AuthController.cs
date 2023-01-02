@@ -24,7 +24,7 @@ public sealed class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterRequest request)
     {
-        var result = await _authService.RegisterAsync(_mapper.Map<RegisterModel>(request));
+        var result = await _authService.RegisterAsync(_mapper.Map<UserRegisterModel>(request));
 
         return result.ToObjectResponse();
     }
@@ -32,7 +32,7 @@ public sealed class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
-        var result = await _authService.LoginAsync(_mapper.Map<LoginModel>(request));
+        var result = await _authService.LoginAsync(_mapper.Map<UserLoginModel>(request));
 
         return result.ToObjectResponse();
     }

@@ -1,6 +1,7 @@
 ﻿namespace BusinessLogic.Models.AppUser;
 
-public sealed record RegisterModel
+public sealed record UserCreateModel
     (string UserName,
+    string Email,
     string Password,
-    string Email);
+    string PhoneNumber);
