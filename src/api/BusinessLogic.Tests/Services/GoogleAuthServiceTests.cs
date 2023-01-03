@@ -71,15 +71,7 @@ public class GoogleAuthServiceTests
             _tokenService.Object);
     }
 
-    private UserLoginModel LoginModel => new UserLoginModel("name", "pass");
-    private UserRegisterModel RegisterModel => new UserRegisterModel("name", "pass", "email");
     private AppUser User => new AppUser { Id = Guid.Empty.ToString(), UserName = "name", Email = "email" };
-    private UserViewModel ViewModel => new UserViewModel
-    {
-        Id = Guid.Empty.ToString(),
-        UserName = "name",
-        Email = "email",
-    };
     private UserAuthModel AuthModel => new UserAuthModel
     {
         Id = Guid.Empty.ToString(),

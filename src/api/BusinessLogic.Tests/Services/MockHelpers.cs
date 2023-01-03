@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
+using System.Collections.Generic;
 
 namespace BusinessLogic.Tests.Services;
 
@@ -36,8 +37,18 @@ internal static class MockHelpers
               TestUserManager<TUser>().Object,
               new HttpContextAccessor(),
               new Mock<IUserClaimsPrincipalFactory<TUser>>().Object,
-              new Mock<Microsoft.Extensions.Options.IOptions<IdentityOptions>>().Object,
+              new Mock<IOptions<IdentityOptions>>().Object,
               new Mock<ILogger<SignInManager<TUser>>>().Object,
               new Mock<Microsoft.AspNetCore.Authentication.IAuthenticationSchemeProvider>().Object);
+    }
+
+    public static Mock<RoleManager<TRole>> TestRoleManager<TRole>() where TRole : class
+    {
+        return new Mock<RoleManager<TRole>>(
+            new Mock<IRoleStore<TRole>>().Object,
+            null,
+            null,
+            null,
+            null);
     }
 }

@@ -80,7 +80,6 @@ public sealed class GoogleAuthService : IGoogleAuthService
     public async Task<Result<AuthenticationProperties>> ConfigureExternalAuthenticationProperties(string redirectUrl) =>
         Result.Ok(_signInManager.ConfigureExternalAuthenticationProperties("google", redirectUrl));
 
-
     private async Task<Result<UserAuthModel>> MapUserToViewWithToken(ITokenService tokenService, AppUser currentUser)
     {
         var tokenResult = await tokenService.CreateTokenAsync(currentUser);
