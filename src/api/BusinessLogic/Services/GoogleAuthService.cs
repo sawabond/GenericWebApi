@@ -45,7 +45,7 @@ public sealed class GoogleAuthService : IGoogleAuthService
 
         if (signInResult.Succeeded)
         {
-            var currentEmail = loginInfo.Principal.FindFirstValue(ClaimTypes.Email);
+            var currentEmail = loginInfo.Principal?.FindFirstValue(ClaimTypes.Email);
             var currentUser = await _userManager.FindByEmailAsync(currentEmail);
             return await MapUserToViewWithToken(_tokenService, currentUser);
         }
@@ -54,7 +54,7 @@ public sealed class GoogleAuthService : IGoogleAuthService
 
         if (email is null)
         {
-            Result.Fail("Could not get email data");
+            return Result.Fail("Could not get email data");
         }
 
         var user = await _userManager.FindByEmailAsync(email);
@@ -63,8 +63,8 @@ public sealed class GoogleAuthService : IGoogleAuthService
         {
             user = new AppUser
             {
-                UserName = loginInfo.Principal.FindFirstValue(ClaimTypes.Email),
-                Email = loginInfo.Principal.FindFirstValue(ClaimTypes.Email),
+                UserName = loginInfo?.Principal.FindFirstValue(ClaimTypes.Email),
+                Email = loginInfo?.Principal.FindFirstValue(ClaimTypes.Email),
                 EmailConfirmed = true,
             };
 
