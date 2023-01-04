@@ -9,6 +9,7 @@ This is a generic web project template. Users can clone it or create new reposit
 - Entity Framework Core code first
 - JWT Bearer auth
 - FluentValidation, AutoMapper, AutoFilterer
+- XUnit, Moq, FluentAssertions
 
 ## Current features
 
@@ -16,10 +17,10 @@ This is a generic web project template. Users can clone it or create new reposit
 - Account confirmation through email
 - Google authentication
 - Admin controller for user CRUD
+- Unit testing coverage
 
 ## Features planned
 
-- Unit testing coverage
 - Integration testing coverage
 - CI/CD process
 
