@@ -18,11 +18,12 @@ This is a generic web project template. Users can clone it or create new reposit
 - Google authentication
 - Admin controller for user CRUD
 - Unit testing coverage
+- CI process
 
 ## Features planned
 
 - Integration testing coverage
-- CI/CD process
+- CD process
 
 ## Usage
 
