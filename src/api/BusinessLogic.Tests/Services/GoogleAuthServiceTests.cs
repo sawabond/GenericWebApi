@@ -9,7 +9,6 @@ using FluentAssertions;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Moq;
-using NSubstitute;
 using System.Security.Claims;
 
 namespace BusinessLogic.Tests.Services;
