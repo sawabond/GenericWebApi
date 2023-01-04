@@ -1,12 +1,15 @@
 using AutoMapper;
+using BusinessLogic.Abstractions;
+using BusinessLogic.Extensions;
+using BusinessLogic.FeatureManagement;
 using BusinessLogic.Mapping;
 using BusinessLogic.Options;
-using DataAccess;
-using DataAccess.Entities;
+using BusinessLogic.Options.Configuration;
 using GenericWebApi.Extensions;
 using GenericWebApi.Mapping;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Microsoft.FeatureManagement;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
@@ -14,23 +17,27 @@ var services = builder.Services;
 services.AddControllersWithViews().AddNewtonsoftJson(options =>
 {
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-}); ;
+});
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();
 
-services.AddDbContext<ApplicationContext>(o => 
+services.AddCors(c =>
 {
-    o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    c.AddPolicy("DefaultPolicy", p =>
+    {
+        p.AllowAnyMethod();
+        p.AllowAnyOrigin();
+        p.AllowAnyHeader();
+    });
 });
 
-services
-    .AddIdentity<AppUser, AppRole>()
-    .AddEntityFrameworkStores<ApplicationContext>()
-    .AddDefaultTokenProviders();
+services.AddApplicationContext(builder.Configuration.GetConnectionString("DefaultConnection"));
+services.AddApplicationIdentity();
 
 services.AddOptions<JwtOptions>().BindConfiguration(JwtOptions.Section);
 
 services.AddBusinessLogicServices();
+services.AddSwagger();
 
 var mapperConfig = new MapperConfiguration(mc =>
 {
@@ -39,10 +46,44 @@ var mapperConfig = new MapperConfiguration(mc =>
 });
 
 services.AddSingleton(mapperConfig.CreateMapper());
+services.AddSingleton<IConfigureOptions<MailSettingsOptions>, MailSettingsSetup>();
 
-services.AddBearerAuthentication();
+#region Features
+
+services.AddFeatureManagement(builder.Configuration.GetSection("FeatureManagement"));
+
+var featureManager = services.BuildServiceProvider().GetRequiredService<IFeatureManager>();
+
+if (await featureManager.IsEnabledAsync(nameof(FeatureFlags.EmailVerification)))
+{
+    services.Configure<IdentityOptions>(opts =>
+    {
+        opts.SignIn.RequireConfirmedEmail = true;
+    });
+}
+
+if (await featureManager.IsEnabledAsync(nameof(FeatureFlags.GoogleAuthentication)))
+{
+    services.AddOptions<GoogleAuthOptions>().BindConfiguration(GoogleAuthOptions.Section);
+
+    services.AddBearerAuthentication().AddGoogle("google", opt =>
+    {
+        var gogleOptions = services.BuildServiceProvider().GetService<IOptions<GoogleAuthOptions>>().Value;
+        opt.ClientId = gogleOptions.ClientId;
+        opt.ClientSecret = gogleOptions.ClientSecret;
+        opt.SignInScheme = IdentityConstants.ExternalScheme;
+    });
+}
+else
+{
+    services.AddBearerAuthentication();
+}
+
+#endregion
 
 var app = builder.Build();
+
+await app.Services.CreateScope().ServiceProvider.GetRequiredService<ISeeder>().SeedAsync();
 
 if (app.Environment.IsDevelopment())
 {
@@ -51,6 +92,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("DefaultPolicy");
 
 app.UseAuthentication();
 

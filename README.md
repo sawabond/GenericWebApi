@@ -8,28 +8,43 @@ This is a generic web project template. Users can clone it or create new reposit
 - 3-layer architecture
 - Entity Framework Core code first
 - JWT Bearer auth
-- FluentValidation, AutoMapper
+- FluentValidation, AutoMapper, AutoFilterer
+- XUnit, Moq, FluentAssertions
 
 ## Current features
 
-- Authorization without roles
+- Role-based auth using basic 'Admin', 'Moder' and 'User' roles
+- Account confirmation through email
+- Google authentication
+- Admin controller for user CRUD
+- Unit testing coverage
+- CI process
 
 ## Features planned
 
-- Google auth
-- Role-based auth
-- Admin controller for user CRUD
-- Account confirmation
+- Integration testing coverage
+- CD process
 
 ## Usage
 
 Clone it to your PC and change the remote or click _Use this template_ -> _Create a new repository_
 
+### Feature management
+
+Some features are implemented with feature flags. To turn it on use `appsettings.json` section
+
+```json
+"FeatureManagement": {
+    "EmailVerification": true,
+    "GoogleAuthentication": true
+  }
+```
+
 ### Services
 
 Services are added in `AddBusinessLogicServices` method with [Scrutor](https://github.com/khellang/Scrutor), so you don't need to add them explicitly. Services are added only from business layer assembly.
 
-```
+```C#
 services.Scan(selector => selector
                 .FromAssemblies(typeof(AssemblyReference).Assembly)
                 .AddClasses(filter => filter.NotInNamespaceOf<ModelsNamespaceReference>(), publicOnly: false)
@@ -41,7 +56,7 @@ services.Scan(selector => selector
 
 Validation is implemented using `IModelValidator` interface. It finds appropriate validators using reflection and validates **business layer models**
 
-```
+```C#
 public interface IModelValidator
 {
     Result Validate<T>(T model) where T : class;
@@ -51,7 +66,7 @@ public interface IModelValidator
 You can just add a validator to business layer assembly and it will be used by the `IModelValidator` implementation. <br>
 Validation type is manual
 
-```
+```C#
 var validationResult = _validator.Validate(model);
 if (!validationResult.IsSuccess) return validationResult;
 ```
