@@ -3,6 +3,7 @@ using BusinessLogic.Abstractions;
 using BusinessLogic.Mapping;
 using BusinessLogic.Models.AppUser;
 using BusinessLogic.Services;
+using BusinessLogic.Tests.Helpers;
 using DataAccess.Entities;
 using FluentAssertions;
 using FluentResults;
@@ -20,7 +21,6 @@ public class GoogleAuthServiceTests
     private readonly Mock<SignInManager<AppUser>> _signInManager;
     private readonly Mock<ClaimsPrincipal> _claims;
     private readonly Mock<ITokenService> _tokenService;
-    private readonly Mock<IMailService> _mailService;
 
     public GoogleAuthServiceTests()
     {

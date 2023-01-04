@@ -1,5 +1,6 @@
 ﻿using BusinessLogic.Core;
 using BusinessLogic.Services;
+using BusinessLogic.Tests.Helpers;
 using DataAccess.Entities;
 using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
@@ -74,7 +75,7 @@ public sealed class SeederTests
     public async void SeedAsync_ConfirmsEmail_IfNotConfirmed()
     {
         var admin = NotConfirmedEmailAdmin;
-        var userList = (new AppUser[] { NotConfirmedEmailAdmin }).AsQueryable().BuildMock();
+        var userList = (new AppUser[] { admin }).AsQueryable().BuildMock();
         _userManager.SetupGet(x => x.Users).Returns(userList);
 
         var result = await _seeder.SeedAsync();

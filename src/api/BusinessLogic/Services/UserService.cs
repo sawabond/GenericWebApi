@@ -46,7 +46,7 @@ public sealed class UserService : IUserService
 
         if (existingUser is not null)
         {
-            return Result.Fail($"The user already exists");
+            return Result.Fail("The user already exists");
         }
 
         return (await _userManager.CreateAsync(user, model.Password)).Succeeded 
@@ -61,7 +61,7 @@ public sealed class UserService : IUserService
 
         if (user is null)
         {
-            return Result.Fail($"User with id {id} was not found");
+            return Result.Fail(NotFound(id));
         }
 
         _repository.Remove(user);
@@ -76,7 +76,7 @@ public sealed class UserService : IUserService
 
         if (user is null)
         {
-            return Result.Fail($"User with id {id} was not found");
+            return Result.Fail(NotFound(id));
         }
 
         var viewModel = _mapper.Map<UserViewModel>(user);
@@ -102,7 +102,7 @@ public sealed class UserService : IUserService
 
         if (user is null)
         {
-            return Result.Fail($"User with id {id} was not found");
+            return Result.Fail(NotFound(id));
         }
 
         _mapper.Map(model, user);
@@ -111,4 +111,6 @@ public sealed class UserService : IUserService
             ? Result.Ok()
             : Result.Fail("Unable to save changes while patching user");
     }
+
+    public static string NotFound(string id) => $"User with id {id} was not found";
 }

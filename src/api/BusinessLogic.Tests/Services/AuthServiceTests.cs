@@ -4,6 +4,7 @@ using BusinessLogic.Mapping;
 using BusinessLogic.Models.AppUser;
 using BusinessLogic.Models.Mail;
 using BusinessLogic.Services;
+using BusinessLogic.Tests.Helpers;
 using BusinessLogic.Validation.Abstractions;
 using DataAccess.Entities;
 using FluentAssertions;
@@ -99,7 +100,7 @@ public sealed class AuthServiceTests
     };
 
     [Fact]
-	public async void Login_ReturnsFailedResultWithErrors_WhenModelIsNotValid()
+	public async void Login_ReturnsFailedResultWithErrors_IfModelIsNotValid()
 	{
 		_validator
 			.Setup(x => x.Validate(It.IsAny<UserLoginModel>()))

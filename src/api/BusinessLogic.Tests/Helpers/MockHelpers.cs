@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 using Moq;
 using System.Collections.Generic;
 
-namespace BusinessLogic.Tests.Services;
+namespace BusinessLogic.Tests.Helpers;
 
 internal static class MockHelpers
 {
