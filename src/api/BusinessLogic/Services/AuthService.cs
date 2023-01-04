@@ -10,7 +10,7 @@ using System.Web;
 
 namespace BusinessLogic.Services;
 
-internal sealed class AuthService : IAuthService
+public sealed class AuthService : IAuthService
 {
     private readonly UserManager<AppUser> _userManager;
     private readonly SignInManager<AppUser> _signInManager;
@@ -58,16 +58,13 @@ internal sealed class AuthService : IAuthService
 
         if (result.Succeeded is false)
         {
-            return Result.Fail($"Invalid login attempt");
+            return Result.Fail("Invalid login attempt");
         }
-
-        var s = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-        var infos = await _signInManager.GetExternalLoginInfoAsync();
 
         return await CreateTokenFor(user);
     }
 
-    public async Task<Result<UserAuthModel>> RegisterAsync(UserRegisterModel model)
+    public async Task<Result<UserViewModel>> RegisterAsync(UserRegisterModel model)
     {
         var validationResult = _validator.Validate(model);
         if (!validationResult.IsSuccess) return validationResult;
@@ -81,7 +78,7 @@ internal sealed class AuthService : IAuthService
             return Result.Fail(identityResult.Errors.Select(e => e.Description));
         }
 
-        var userViewModel = _mapper.Map<UserAuthModel>(user);
+        var userViewModel = _mapper.Map<UserViewModel>(user);
 
         return Result.Ok(userViewModel);
     }
@@ -113,7 +110,7 @@ internal sealed class AuthService : IAuthService
 
         if (user.EmailConfirmed)
         {
-            return Result.Fail("Email of user is already confirmed");
+            return Result.Fail("Email of the user is already confirmed");
         }
 
         var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);

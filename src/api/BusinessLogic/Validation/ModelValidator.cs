@@ -5,7 +5,7 @@ using FluentValidation.Internal;
 
 namespace BusinessLogic.Validation;
 
-internal sealed class ModelValidator : IModelValidator
+public sealed class ModelValidator : IModelValidator
 {
     private readonly IEnumerable<IValidator> _validators;
 

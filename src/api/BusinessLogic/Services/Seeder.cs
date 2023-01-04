@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BusinessLogic.Services;
 
-internal sealed class Seeder : ISeeder
+public sealed class Seeder : ISeeder
 {
     private readonly UserManager<AppUser> _userManager;
     private readonly RoleManager<AppRole> _roleManager;

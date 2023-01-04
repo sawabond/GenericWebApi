@@ -9,7 +9,7 @@ using System.Security.Claims;
 
 namespace BusinessLogic.Services;
 
-internal sealed class GoogleAuthService : IGoogleAuthService
+public sealed class GoogleAuthService : IGoogleAuthService
 {
     private readonly SignInManager<AppUser> _signInManager;
     private readonly UserManager<AppUser> _userManager;
@@ -45,7 +45,7 @@ internal sealed class GoogleAuthService : IGoogleAuthService
 
         if (signInResult.Succeeded)
         {
-            var currentEmail = loginInfo.Principal.FindFirstValue(ClaimTypes.Email);
+            var currentEmail = loginInfo.Principal?.FindFirstValue(ClaimTypes.Email);
             var currentUser = await _userManager.FindByEmailAsync(currentEmail);
             return await MapUserToViewWithToken(_tokenService, currentUser);
         }
@@ -54,7 +54,7 @@ internal sealed class GoogleAuthService : IGoogleAuthService
 
         if (email is null)
         {
-            Result.Fail("Could not get email data");
+            return Result.Fail("Could not get email data");
         }
 
         var user = await _userManager.FindByEmailAsync(email);
@@ -63,8 +63,8 @@ internal sealed class GoogleAuthService : IGoogleAuthService
         {
             user = new AppUser
             {
-                UserName = loginInfo.Principal.FindFirstValue(ClaimTypes.Email),
-                Email = loginInfo.Principal.FindFirstValue(ClaimTypes.Email),
+                UserName = loginInfo?.Principal.FindFirstValue(ClaimTypes.Email),
+                Email = loginInfo?.Principal.FindFirstValue(ClaimTypes.Email),
                 EmailConfirmed = true,
             };
 
@@ -79,7 +79,6 @@ internal sealed class GoogleAuthService : IGoogleAuthService
 
     public async Task<Result<AuthenticationProperties>> ConfigureExternalAuthenticationProperties(string redirectUrl) =>
         Result.Ok(_signInManager.ConfigureExternalAuthenticationProperties("google", redirectUrl));
-
 
     private async Task<Result<UserAuthModel>> MapUserToViewWithToken(ITokenService tokenService, AppUser currentUser)
     {
