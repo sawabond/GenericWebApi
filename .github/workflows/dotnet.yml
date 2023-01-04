@@ -18,11 +18,11 @@ jobs:
         run: dotnet build --no-restore src/api/GenericWebApi/GenericWebApi.csproj
 
       - name: Run Unit Tests
-        run: dotnet test --logger "trx;LogFileName=test-results.trx" src/api/GenericWebApi/BusinessLogic.Tests/BusinessLogic.Tests.csproj
+        run: dotnet test --logger "trx;LogFileName=test-results.trx" src/api/BusinessLogic.Tests/BusinessLogic.Tests.csproj
       - name: Unit Test Report
         uses: dorny/test-reporter@v1
         if: success() || failure() # run this step even if previous step failed
         with:
           name: GenericWebApi Unit Tests
-          path: src/api/GenericWebApi/BusinessLogic.Tests/TestResults/test-results.trx # Path to test results
+          path: src/api/BusinessLogic.Tests/TestResults/test-results.trx # Path to test results
           reporter: dotnet-trx # Format of test results
