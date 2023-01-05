@@ -15,9 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessLogic.Tests", "Busi
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MigrationAssemblies", "MigrationAssemblies", "{0F77058F-74F6-4D24-8C32-F37EF5F736BF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostgresMigrations", "PostgresMigrations\PostgresMigrations.csproj", "{6DB3A792-9DCE-4098-8E64-F41D0935B241}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PostgresMigrations", "PostgresMigrations\PostgresMigrations.csproj", "{6DB3A792-9DCE-4098-8E64-F41D0935B241}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlServerMigrations", "SqlServerMigrations\SqlServerMigrations.csproj", "{5DD83259-607E-4BD6-9651-533416F3EAC0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlServerMigrations", "SqlServerMigrations\SqlServerMigrations.csproj", "{5DD83259-607E-4BD6-9651-533416F3EAC0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
