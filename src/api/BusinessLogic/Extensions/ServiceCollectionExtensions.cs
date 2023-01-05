@@ -21,7 +21,7 @@ public static class ServiceCollectionExtensions
                     o.UseSqlServer(connString, x => x.MigrationsAssembly("SqlServerMigrations"));
                     break;
                 case DatabaseType.PostgreSql:
-                    o.UseNpgsql(connString); //, x => x.MigrationsAssembly("PostgresMigrations")
+                    o.UseNpgsql(connString, x => x.MigrationsAssembly("PostgresMigrations"));
                     break;
                 default:
                     break;
