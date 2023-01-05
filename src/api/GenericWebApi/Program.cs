@@ -1,5 +1,6 @@
 using AutoMapper;
 using BusinessLogic.Abstractions;
+using BusinessLogic.Enums;
 using BusinessLogic.Extensions;
 using BusinessLogic.FeatureManagement;
 using BusinessLogic.Mapping;
@@ -31,7 +32,9 @@ services.AddCors(c =>
     });
 });
 
-services.AddApplicationContext(builder.Configuration.GetConnectionString("DefaultConnection"));
+services.AddApplicationContext(
+    builder.Configuration.GetConnectionString("DefaultConnection"),
+    builder.Configuration.GetValue<DatabaseType>("DatabaseType"));
 services.AddApplicationIdentity();
 
 services.AddOptions<JwtOptions>().BindConfiguration(JwtOptions.Section);

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BusinessLogic.Abstractions;
+using BusinessLogic.Core;
 using BusinessLogic.Models.AppUser;
 using DataAccess.Entities;
 using FluentResults;
@@ -69,6 +70,7 @@ public sealed class GoogleAuthService : IGoogleAuthService
             };
 
             await _userManager.CreateAsync(user);
+            await _userManager.AddToRoleAsync(user, Roles.User);
         }
 
         await _userManager.AddLoginAsync(user, loginInfo);
