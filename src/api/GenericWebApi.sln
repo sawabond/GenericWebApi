@@ -11,7 +11,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccess", "DataAccess\Da
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{83D95963-7884-4995-A473-701A08ED693D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessLogic.Tests", "BusinessLogic.Tests\BusinessLogic.Tests.csproj", "{225F02D4-10E3-4564-81E9-DF06EE13F4B2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessLogic.Tests", "BusinessLogic.Tests\BusinessLogic.Tests.csproj", "{225F02D4-10E3-4564-81E9-DF06EE13F4B2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MigrationAssemblies", "MigrationAssemblies", "{0F77058F-74F6-4D24-8C32-F37EF5F736BF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostgresMigrations", "PostgresMigrations\PostgresMigrations.csproj", "{6DB3A792-9DCE-4098-8E64-F41D0935B241}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlServerMigrations", "SqlServerMigrations\SqlServerMigrations.csproj", "{5DD83259-607E-4BD6-9651-533416F3EAC0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,12 +41,22 @@ Global
 		{225F02D4-10E3-4564-81E9-DF06EE13F4B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{225F02D4-10E3-4564-81E9-DF06EE13F4B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{225F02D4-10E3-4564-81E9-DF06EE13F4B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6DB3A792-9DCE-4098-8E64-F41D0935B241}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DB3A792-9DCE-4098-8E64-F41D0935B241}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DB3A792-9DCE-4098-8E64-F41D0935B241}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6DB3A792-9DCE-4098-8E64-F41D0935B241}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5DD83259-607E-4BD6-9651-533416F3EAC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DD83259-607E-4BD6-9651-533416F3EAC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5DD83259-607E-4BD6-9651-533416F3EAC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5DD83259-607E-4BD6-9651-533416F3EAC0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{225F02D4-10E3-4564-81E9-DF06EE13F4B2} = {83D95963-7884-4995-A473-701A08ED693D}
+		{6DB3A792-9DCE-4098-8E64-F41D0935B241} = {0F77058F-74F6-4D24-8C32-F37EF5F736BF}
+		{5DD83259-607E-4BD6-9651-533416F3EAC0} = {0F77058F-74F6-4D24-8C32-F37EF5F736BF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C0BAE204-1D8F-4569-BBCF-0699856CE0CA}

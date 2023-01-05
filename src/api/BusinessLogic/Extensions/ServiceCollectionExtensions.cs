@@ -1,4 +1,5 @@
-﻿using DataAccess;
+﻿using BusinessLogic.Enums;
+using DataAccess;
 using DataAccess.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -8,10 +9,23 @@ namespace BusinessLogic.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddApplicationContext(this IServiceCollection services, string connString) =>
+    public static IServiceCollection AddApplicationContext(
+        this IServiceCollection services, 
+        string connString,
+        DatabaseType databaseType) =>
         services.AddDbContext<ApplicationContext>(o =>
         {
-            o.UseSqlServer(connString);
+            switch (databaseType)
+            {
+                case DatabaseType.SqlServer:
+                    o.UseSqlServer(connString, x => x.MigrationsAssembly("SqlServerMigrations"));
+                    break;
+                case DatabaseType.PostgreSql:
+                    o.UseNpgsql(connString, x => x.MigrationsAssembly("PostgresMigrations"));
+                    break;
+                default:
+                    break;
+            }
         });
 
     public static IdentityBuilder AddApplicationIdentity(this IServiceCollection services) =>
