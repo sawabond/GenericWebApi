@@ -88,11 +88,11 @@ var app = builder.Build();
 
 await app.Services.CreateScope().ServiceProvider.GetRequiredService<ISeeder>().SeedAsync();
 
-if (app.Environment.IsDevelopment())
-{
+//if (app.Environment.IsDevelopment())
+//{
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+//}
 
 app.UseHttpsRedirection();
 
