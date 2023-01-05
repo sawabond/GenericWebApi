@@ -5,6 +5,10 @@ on:
   push:
     branches:
     - release/1.3.*
+    
+env:
+  AZURE_WEBAPP_NAME: generic-web-api
+  AZURE_WEBAPP_PACKAGE_PATH: "./publish"
 
 jobs:
   publish:
@@ -25,4 +29,11 @@ jobs:
         run: dotnet build src/api/GenericWebApi.sln --configuration Release --no-restore
         
       - name: Publish
-        run: dotnet publish src/api/GenericWebApi.sln --configuration Release --no-build
+        run: dotnet publish src/api/GenericWebApi.sln --configuration Release --no-build --output '${{ env.AZURE_WEBAPP_PACKAGE_PATH}}'
+        
+      - name: Deployment
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+          package: "${{ env.AZURE_WEBAPP_PACKAGE_PATH}}"
