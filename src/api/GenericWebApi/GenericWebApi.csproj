@@ -28,8 +28,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\BusinessLogic\BusinessLogic.csproj" />
-    <ProjectReference Include="..\..\DataAccess\DataAccess.csproj" />
     <ProjectReference Include="..\BusinessLogic\BusinessLogic.csproj" />
     <ProjectReference Include="..\PostgresMigrations\PostgresMigrations.csproj" />
     <ProjectReference Include="..\SqlServerMigrations\SqlServerMigrations.csproj" />
