@@ -23,6 +23,9 @@ public static class ServiceCollectionExtensions
                 case DatabaseType.PostgreSql:
                     o.UseNpgsql(connString, x => x.MigrationsAssembly("PostgresMigrations"));
                     break;
+                case DatabaseType.InMemory:
+                    o.UseInMemoryDatabase("InMemory");
+                    break;
                 default:
                     break;
             }

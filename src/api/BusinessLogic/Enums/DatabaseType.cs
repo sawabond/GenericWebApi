@@ -2,6 +2,7 @@
 
 public enum DatabaseType
 {
-    SqlServer,
-    PostgreSql
+    SqlServer = 0,
+    PostgreSql = 1,
+    InMemory = 2,
 }
