@@ -19,11 +19,11 @@ This is a generic web project template. Users can clone it or create new reposit
 - Admin controller for user CRUD
 - Unit testing coverage
 - CI process
+- CD process
 
 ## Features planned
 
 - Integration testing coverage
-- CD process
 
 ## Usage
 
@@ -70,6 +70,12 @@ Validation type is manual
 var validationResult = _validator.Validate(model);
 if (!validationResult.IsSuccess) return validationResult;
 ```
+
+## CI/CD
+
+These files can be viewed in github actions</br>
+Unit test running and report publishing are present on PRs to dev</br>
+Deployment to Azure as Web Service is present</br>
 
 ## Contributing
 
