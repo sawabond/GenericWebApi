@@ -23,16 +23,16 @@ jobs:
           dotnet-version: '7.0.x'
           
       - name: Restore
-        working-directory: ./src/api
-        run: dotnet restore GenericWebApi.sln
+        working-directory: ./src/api/GenericWebApi
+        run: dotnet restore GenericWebApi.csproj
         
       - name: Build
-        working-directory: ./src/api
-        run: dotnet build GenericWebApi.sln --configuration Release --no-restore
+        working-directory: ./src/api/GenericWebApi
+        run: dotnet build GenericWebApi.csproj --configuration Release --no-restore
         
       - name: Publish
-        working-directory: ./src/api
-        run: dotnet publish GenericWebApi.sln --configuration Release --no-build --output '../../${{ env.AZURE_WEBAPP_PACKAGE_PATH }}'
+        working-directory: ./src/api/GenericWebApi
+        run: dotnet publish GenericWebApi.csproj --configuration Release --no-build --output '../../../${{ env.AZURE_WEBAPP_PACKAGE_PATH }}'
       
       - name: List all files
         run: ls -R
