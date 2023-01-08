@@ -5,6 +5,7 @@ on:
   push:
     branches:
     - master
+    - release/1.4.0
     
 env:
   AZURE_WEBAPP_NAME: generic-web-api
@@ -33,9 +34,6 @@ jobs:
       - name: Publish
         working-directory: ./src/api/GenericWebApi
         run: dotnet publish GenericWebApi.csproj --configuration Release --no-build --output '../../../${{ env.AZURE_WEBAPP_PACKAGE_PATH }}'
-      
-      - name: List all files
-        run: ls -R
         
       - name: Deployment
         uses: azure/webapps-deploy@v2
