@@ -3,12 +3,10 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Respawn;
-using System.Data.Common;
 
 namespace GenericWebApi.IntegrationTests;
 
-public class WebApiApplication : WebApplicationFactory<Program>
+internal class WebApiApplication : WebApplicationFactory<Program>
 {
     protected override IHost CreateHost(IHostBuilder builder)
     {

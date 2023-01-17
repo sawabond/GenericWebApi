@@ -11,7 +11,7 @@ public class IntegrationTest
 		TestClient = WebApi.CreateClient();
 	}
 
-	protected WebApiApplication WebApi { get; }
+    internal WebApiApplication WebApi { get; }
 
 	protected HttpClient TestClient { get; }
 }

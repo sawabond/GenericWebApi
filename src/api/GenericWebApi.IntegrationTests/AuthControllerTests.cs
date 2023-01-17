@@ -14,11 +14,6 @@ public class AuthControllerTests : IntegrationTest
 
 	}
 
-    public void Dispose()
-    {
-        throw new NotImplementedException();
-    }
-
     [Fact]
 	public async void Register_RegistersUser_WithValidData()
     {
