@@ -1,7 +1,7 @@
 ﻿namespace GenericWebApi.IntegrationTests.Helpers;
 
 internal sealed record Response<T>
-    (T Value,
+    (T Data,
     string[] Errors);
 
 internal sealed record Response
