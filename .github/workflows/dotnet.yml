@@ -33,6 +33,6 @@ jobs:
         uses: dorny/test-reporter@v1
         if: success() || failure()
         with:
-          name: GenericWebApi Unit Tests
+          name: GenericWebApi Integration Tests
           path: src/api/GenericWebApi.IntegrationTests/TestResults/integration-test-results.trx
           reporter: dotnet-trx
