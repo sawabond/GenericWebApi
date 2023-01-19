@@ -34,5 +34,5 @@ jobs:
         if: success() || failure()
         with:
           name: GenericWebApi Unit Tests
-          path: src/api/BusinessLogic.Tests/TestResults/integration-test-results.trx
+          path: src/api/GenericWebApi.IntegrationTests/TestResults/integration-test-results.trx
           reporter: dotnet-trx
