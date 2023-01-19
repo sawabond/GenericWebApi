@@ -1,6 +1,7 @@
 ﻿using DataAccess;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -10,6 +11,11 @@ public class WebApiApplication : WebApplicationFactory<Program>
 {
     protected override IHost CreateHost(IHostBuilder builder)
     {
+        builder.ConfigureHostConfiguration(config =>
+        {
+            config.AddJsonFile("appsettings.Development.json").AddEnvironmentVariables().Build();
+        });
+
         builder.ConfigureServices(services =>
         {
             services.AddScoped(sp =>
