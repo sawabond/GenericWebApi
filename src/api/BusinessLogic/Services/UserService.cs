@@ -42,7 +42,7 @@ public sealed class UserService : IUserService
         var existingUser = (await _repository
             .FindAsync(u => u.UserName == model.UserName 
             || u.Email == model.Email
-            || u.PhoneNumber == model.PhoneNumber)).FirstOrDefault();
+            || (u.PhoneNumber == model.PhoneNumber && u.PhoneNumber != null))).FirstOrDefault();
 
         if (existingUser is not null)
         {
