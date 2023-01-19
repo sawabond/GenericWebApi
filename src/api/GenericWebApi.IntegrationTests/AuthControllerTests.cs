@@ -70,7 +70,7 @@ public class AuthControllerTests : IntegrationTest
         var response = await TestClient.PostAsync(Login, loginContent);
 
         response.IsSuccessStatusCode.Should().BeFalse();
-        (await response.AsErrors()).Should().Contain("Wrong password");
+        (await response.AsErrors()).Should().ContainEquivalentOf("Wrong password");
     }
 
     [Fact]
@@ -88,14 +88,11 @@ public class AuthControllerTests : IntegrationTest
         content.Errors.Should().BeEmpty();
 
         var userModel = content.Data;
-        userModel.Username.Should().Be("Username");
+        userModel.UserName.Should().Be("Username");
         userModel.Email.Should().Be("test@mail.com");
         userModel.Id.Should().NotBeNullOrWhiteSpace();
         userModel.Token.Should().NotBeNullOrEmpty();
     }
-
-    private static JsonContent GetJsonContent(object @object) =>
-        JsonContent.Create(@object);
 
     private static object RegisterModel 
         => new { UserName = "Username", Password = "Pa$$w0rd", Email = "test@mail.com" };

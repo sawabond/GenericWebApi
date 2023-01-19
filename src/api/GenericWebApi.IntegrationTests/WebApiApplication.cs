@@ -6,7 +6,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace GenericWebApi.IntegrationTests;
 
-internal class WebApiApplication : WebApplicationFactory<Program>
+public class WebApiApplication : WebApplicationFactory<Program>
 {
     protected override IHost CreateHost(IHostBuilder builder)
     {
