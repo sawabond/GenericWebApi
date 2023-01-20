@@ -58,7 +58,7 @@ public sealed class AuthService : IAuthService
 
         if (result.Succeeded is false)
         {
-            return Result.Fail("Invalid login attempt");
+            return Result.Ok(_mapper.Map<UserAuthModel>(user)).WithError("Unable to log in user");
         }
 
         return await CreateTokenFor(user);
@@ -120,9 +120,11 @@ public sealed class AuthService : IAuthService
         var link = $"{confirmUrl}?userId={user.Id}&token={token}&callbackUrl={callbackUrl}";
 
         var mail = new MailData(
-            new List<string> { user.Email },
+            user.Email,
             "Email confirmation",
-            $"Confirm your email by <a href={link}>this link</a>");
+            $"Confirm your email by <a href={link}>this link</a>",
+            "noreply.generic.web.api@gmail.com",
+            "Generic Web API");
 
         var sendEmailResult = await _mailService.SendAsync(mail);
 

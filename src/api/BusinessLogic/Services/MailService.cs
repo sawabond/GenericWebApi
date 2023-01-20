@@ -1,12 +1,13 @@
-﻿using BusinessLogic.Abstractions;
+﻿using Azure;
+using BusinessLogic.Abstractions;
 using BusinessLogic.Models.Mail;
 using BusinessLogic.Options;
 using FluentResults;
-using MailKit.Net.Smtp;
-using MailKit.Security;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using MimeKit;
+using Newtonsoft.Json;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 
 namespace BusinessLogic.Services;
 
@@ -27,60 +28,24 @@ public sealed class MailService : IMailService
     {
         try
         {
-            var mail = new MimeMessage();
+            var client = new SendGridClient(_settings.SendGridKey);
 
-            mail.From.Add(new MailboxAddress(_settings.DisplayName, mailData.From ?? _settings.From));
-            mail.Sender = new MailboxAddress(mailData.DisplayName ?? _settings.DisplayName, mailData.From ?? _settings.From);
+            var from = new EmailAddress(mailData.From, mailData.DisplayName);
+            var to = new EmailAddress(mailData.To, mailData.To);
+            var subject = mailData.Subject;
+            var htmlContent = mailData.Body;
 
-            foreach (string mailAddress in mailData.To)
-            {
-                mail.To.Add(MailboxAddress.Parse(mailAddress));
-            }
+            var message = MailHelper.CreateSingleEmail(from, to, subject, string.Empty, htmlContent);
 
-            if (!string.IsNullOrEmpty(mailData.ReplyTo))
-            {
-                mail.ReplyTo.Add(new MailboxAddress(mailData.ReplyToName, mailData.ReplyTo));
-            }
+            _logger.LogTrace(
+                "Sending email from {from} to {to} with subject {subject}",
+                from.Email, to.Email, subject);
 
-            if (mailData.Bcc is not null)
-            {
-                foreach (string mailAddress in mailData.Bcc.Where(x => !string.IsNullOrWhiteSpace(x)))
-                {
-                    mail.Bcc.Add(MailboxAddress.Parse(mailAddress.Trim()));
-                }
-            }
+            var response = await client.SendEmailAsync(message);
 
-            if (mailData.Cc != null)
-            {
-                foreach (string mailAddress in mailData.Cc.Where(x => !string.IsNullOrWhiteSpace(x)))
-                {
-                    mail.Cc.Add(MailboxAddress.Parse(mailAddress.Trim()));
-                }
-            }
-
-            var body = new BodyBuilder();
-            mail.Subject = mailData.Subject;
-            body.HtmlBody = mailData.Body;
-            mail.Body = body.ToMessageBody();
-
-            using var smtp = new SmtpClient();
-            smtp.CheckCertificateRevocation = false;
-
-            if (_settings.UseSSL)
-            {
-                await smtp.ConnectAsync(_settings.Host, _settings.Port, SecureSocketOptions.SslOnConnect);
-            }
-            else if (_settings.UseStartTls)
-            {
-                await smtp.ConnectAsync(_settings.Host, _settings.Port, SecureSocketOptions.StartTls);
-            }
-
-            await smtp.AuthenticateAsync(_settings.UserName, _settings.Password);
-            await smtp.SendAsync(mail);
-            await smtp.DisconnectAsync(true);
-
-            return Result.Ok();
-
+            return response.IsSuccessStatusCode
+                ? Result.Ok()
+                : Result.Fail(await response.Body.ReadAsStringAsync());
         }
         catch (Exception ex)
         {
@@ -88,4 +53,11 @@ public sealed class MailService : IMailService
             return Result.Fail("Unable to send email");
         }
     }
+
+    //private async Task<string[]> ExtractErrorsFrom(HttpContent content)
+    //{
+    //    var response = JsonConvert.DeserializeObject<>(await content.ReadAsStringAsync());
+    //}
+
+    //private class
 }
