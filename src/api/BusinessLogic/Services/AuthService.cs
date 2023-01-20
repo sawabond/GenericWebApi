@@ -122,9 +122,7 @@ public sealed class AuthService : IAuthService
         var mail = new MailData(
             user.Email,
             "Email confirmation",
-            $"Confirm your email by <a href={link}>this link</a>",
-            "noreply.generic.web.api@gmail.com",
-            "Generic Web API");
+            $"Confirm your email by <a href={link}>this link</a>");
 
         var sendEmailResult = await _mailService.SendAsync(mail);
 

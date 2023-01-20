@@ -2,24 +2,14 @@
 
 public sealed class MailData
 {
-    public MailData(string to,
-                    string subject,
-                    string body = null,
-                    string from = null,
-                    string displayName = null)
+    public MailData(string to, string subject, string body = null)
     {
         To = to;
-        From = from;
-        DisplayName = displayName;
         Subject = subject;
         Body = body;
     }
 
     public string To { get; }
-
-    public string From { get; }
-
-    public string DisplayName { get; }
 
     public string Subject { get; }
 

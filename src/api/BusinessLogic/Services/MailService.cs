@@ -1,5 +1,4 @@
-﻿using Azure;
-using BusinessLogic.Abstractions;
+﻿using BusinessLogic.Abstractions;
 using BusinessLogic.Models.Mail;
 using BusinessLogic.Options;
 using FluentResults;
@@ -7,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using SendGrid;
+using SendGrid.Helpers.Errors.Model;
 using SendGrid.Helpers.Mail;
 
 namespace BusinessLogic.Services;
@@ -30,7 +30,7 @@ public sealed class MailService : IMailService
         {
             var client = new SendGridClient(_settings.SendGridKey);
 
-            var from = new EmailAddress(mailData.From, mailData.DisplayName);
+            var from = new EmailAddress(_settings.EmailFrom, _settings.NickNameFrom);
             var to = new EmailAddress(mailData.To, mailData.To);
             var subject = mailData.Subject;
             var htmlContent = mailData.Body;
@@ -45,7 +45,7 @@ public sealed class MailService : IMailService
 
             return response.IsSuccessStatusCode
                 ? Result.Ok()
-                : Result.Fail(await response.Body.ReadAsStringAsync());
+                : Result.Fail(await ExtractErrorFrom(response.Body));
         }
         catch (Exception ex)
         {
@@ -54,10 +54,10 @@ public sealed class MailService : IMailService
         }
     }
 
-    //private async Task<string[]> ExtractErrorsFrom(HttpContent content)
-    //{
-    //    var response = JsonConvert.DeserializeObject<>(await content.ReadAsStringAsync());
-    //}
+    private async Task<string> ExtractErrorFrom(HttpContent content)
+    {
+        var errorResponse = JsonConvert.DeserializeObject<SendGridErrorResponse>(await content.ReadAsStringAsync());
 
-    //private class
+        return errorResponse.SendGridErrorMessage;
+    }
 }
