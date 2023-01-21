@@ -21,8 +21,18 @@ jobs:
         run: dotnet test --logger "trx;LogFileName=test-results.trx" src/api/BusinessLogic.Tests/BusinessLogic.Tests.csproj
       - name: Unit Test Report
         uses: dorny/test-reporter@v1
-        if: success() || failure() # run this step even if previous step failed
+        if: success() || failure()
         with:
           name: GenericWebApi Unit Tests
-          path: src/api/BusinessLogic.Tests/TestResults/test-results.trx # Path to test results
-          reporter: dotnet-trx # Format of test results
+          path: src/api/BusinessLogic.Tests/TestResults/test-results.trx
+          reporter: dotnet-trx
+
+      - name: Run Integration Tests
+        run: dotnet test --logger "trx;LogFileName=integration-test-results.trx" src/api/GenericWebApi.IntegrationTests/GenericWebApi.IntegrationTests.csproj
+      - name: Integration Test Report
+        uses: dorny/test-reporter@v1
+        if: success() || failure()
+        with:
+          name: GenericWebApi Integration Tests
+          path: src/api/GenericWebApi.IntegrationTests/TestResults/integration-test-results.trx
+          reporter: dotnet-trx

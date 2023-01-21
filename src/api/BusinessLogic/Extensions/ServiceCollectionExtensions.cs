@@ -1,9 +1,12 @@
 ﻿using BusinessLogic.Enums;
+using BusinessLogic.Options;
 using DataAccess;
 using DataAccess.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SendGrid;
 
 namespace BusinessLogic.Extensions;
 
@@ -36,4 +39,11 @@ public static class ServiceCollectionExtensions
         .AddIdentity<AppUser, AppRole>()
         .AddEntityFrameworkStores<ApplicationContext>()
         .AddDefaultTokenProviders();
+
+    public static IServiceCollection AddSendGridClient(this IServiceCollection services, IConfiguration config) =>
+        services.AddSingleton<ISendGridClient>(_ =>
+        {
+            var apiKey = config.GetValue<string>("MailSettingsOptions:SendGridKey");
+            return new SendGridClient(apiKey);
+        });
 }
