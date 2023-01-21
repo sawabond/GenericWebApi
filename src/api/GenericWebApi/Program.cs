@@ -40,6 +40,7 @@ public class Program
             builder.Configuration.GetConnectionString("DefaultConnection"),
             builder.Configuration.GetValue<DatabaseType>("DatabaseType"));
         services.AddApplicationIdentity();
+        services.AddSendGridClient(builder.Configuration);
 
         services.AddOptions<JwtOptions>().BindConfiguration(JwtOptions.Section);
 

@@ -46,6 +46,7 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddBusinessLogicServices(this IServiceCollection services)
     {
+        
         return services.Scan(selector => selector
                 .FromAssemblies(typeof(AssemblyReference).Assembly)
                 .AddClasses(filter => 

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BusinessLogic.Abstractions;
+using BusinessLogic.Core;
 using BusinessLogic.Models.AppUser;
 using BusinessLogic.Models.Mail;
 using BusinessLogic.Validation.Abstractions;
@@ -58,7 +59,7 @@ public sealed class AuthService : IAuthService
 
         if (result.Succeeded is false)
         {
-            return Result.Fail("Invalid login attempt");
+            return Result.Ok(_mapper.Map<UserAuthModel>(user)).WithError("Unable to log in user");
         }
 
         return await CreateTokenFor(user);
@@ -76,6 +77,13 @@ public sealed class AuthService : IAuthService
         if (identityResult.Succeeded is false)
         {
             return Result.Fail(identityResult.Errors.Select(e => e.Description));
+        }
+
+        var roleResult = await _userManager.AddToRoleAsync(user, Roles.User);
+
+        if (roleResult.Succeeded is false)
+        {
+            return Result.Fail(roleResult.Errors.Select(e => e.Description));
         }
 
         var userViewModel = _mapper.Map<UserViewModel>(user);
@@ -120,7 +128,7 @@ public sealed class AuthService : IAuthService
         var link = $"{confirmUrl}?userId={user.Id}&token={token}&callbackUrl={callbackUrl}";
 
         var mail = new MailData(
-            new List<string> { user.Email },
+            user.Email,
             "Email confirmation",
             $"Confirm your email by <a href={link}>this link</a>");
 
