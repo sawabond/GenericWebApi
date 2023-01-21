@@ -10,6 +10,7 @@ This is a generic web project template. Users can clone it or create new reposit
 - JWT Bearer authorization
 - FluentResults, FluentValidation, AutoMapper, AutoFilterer
 - XUnit, Moq, FluentAssertions, EF Core InMemory for testing
+- SendGrid API for email sending
 
 ## Current features
 
@@ -22,7 +23,7 @@ This is a generic web project template. Users can clone it or create new reposit
 
 ## Features planned
 
-- SMTP -> SendGrid email sending
+- Generic UI
 
 ## Usage
 
