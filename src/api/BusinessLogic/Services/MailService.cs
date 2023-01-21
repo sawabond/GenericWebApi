@@ -15,21 +15,22 @@ public sealed class MailService : IMailService
 {
     private readonly MailSettingsOptions _settings;
     private readonly ILogger<MailService> _logger;
+    private readonly ISendGridClient _sendGridClient;
 
     public MailService(
         IOptions<MailSettingsOptions> settingsOptions, 
-        ILogger<MailService> logger)
+        ILogger<MailService> logger,
+        ISendGridClient sendGridClient)
     {
         _settings = settingsOptions.Value;
         _logger = logger;
+        _sendGridClient = sendGridClient;
     }
 
     public async Task<Result> SendAsync(MailData mailData)
     {
         try
         {
-            var client = new SendGridClient(_settings.SendGridKey);
-
             var from = new EmailAddress(_settings.EmailFrom, _settings.NickNameFrom);
             var to = new EmailAddress(mailData.To, mailData.To);
             var subject = mailData.Subject;
@@ -41,7 +42,7 @@ public sealed class MailService : IMailService
                 "Sending email from {from} to {to} with subject {subject}",
                 from.Email, to.Email, subject);
 
-            var response = await client.SendEmailAsync(message);
+            var response = await _sendGridClient.SendEmailAsync(message);
 
             return response.IsSuccessStatusCode
                 ? Result.Ok()
@@ -57,7 +58,7 @@ public sealed class MailService : IMailService
     private async Task<string> ExtractErrorFrom(HttpContent content)
     {
         var errorResponse = JsonConvert.DeserializeObject<SendGridErrorResponse>(await content.ReadAsStringAsync());
-
+        
         return errorResponse.SendGridErrorMessage;
     }
 }

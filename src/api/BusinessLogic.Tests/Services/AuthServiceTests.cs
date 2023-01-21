@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BusinessLogic.Abstractions;
+using BusinessLogic.Core;
 using BusinessLogic.Mapping;
 using BusinessLogic.Models.AppUser;
 using BusinessLogic.Models.Mail;
@@ -11,6 +12,7 @@ using FluentAssertions;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using Moq;
+using NSubstitute.ReceivedExtensions;
 
 namespace BusinessLogic.Tests.Services;
 
@@ -37,6 +39,9 @@ public sealed class AuthServiceTests
             .ReturnsAsync(true);
         _userManager
             .Setup(x => x.CreateAsync(It.IsAny<AppUser>(), It.IsAny<string>()))
+            .ReturnsAsync(IdentityResult.Success);
+        _userManager
+            .Setup(x => x.AddToRoleAsync(It.IsAny<AppUser>(), It.IsAny<string>()))
             .ReturnsAsync(IdentityResult.Success);
         _userManager
             .Setup(x => x.ConfirmEmailAsync(It.IsAny<AppUser>(), It.IsAny<string>()))
@@ -146,7 +151,7 @@ public sealed class AuthServiceTests
         var result = await _authService.LoginAsync(LoginModel);
 
         result.IsSuccess.Should().BeFalse();
-        result.Errors.Should().ContainEquivalentOf(new Error("Invalid login attempt"));
+        result.Errors.Should().ContainEquivalentOf(new Error("Unable to log in user"));
     }
 
     [Fact]
@@ -206,6 +211,7 @@ public sealed class AuthServiceTests
         result.Value.UserName.Should().Be(ViewModel.UserName);
         result.Value.Email.Should().Be(ViewModel.Email);
         result.Value.Id.Should().NotBeNullOrEmpty();
+        _userManager.Verify(x => x.AddToRoleAsync(It.IsAny<AppUser>(), Roles.User), Times.Once);
     }
 
     [Fact]

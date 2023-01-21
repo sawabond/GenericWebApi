@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BusinessLogic.Abstractions;
+using BusinessLogic.Core;
 using BusinessLogic.Models.AppUser;
 using BusinessLogic.Models.Mail;
 using BusinessLogic.Validation.Abstractions;
@@ -76,6 +77,13 @@ public sealed class AuthService : IAuthService
         if (identityResult.Succeeded is false)
         {
             return Result.Fail(identityResult.Errors.Select(e => e.Description));
+        }
+
+        var roleResult = await _userManager.AddToRoleAsync(user, Roles.User);
+
+        if (roleResult.Succeeded is false)
+        {
+            return Result.Fail(roleResult.Errors.Select(e => e.Description));
         }
 
         var userViewModel = _mapper.Map<UserViewModel>(user);
